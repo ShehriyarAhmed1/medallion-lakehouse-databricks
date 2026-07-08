@@ -40,7 +40,7 @@ Databricks Free Edition · Delta Lake · Lakeflow Declarative Pipelines (DLT) ·
 - [x] **M0** — Planning & repo setup
 - [x] **M1** — Bronze (raw ingestion)
 - [x] **M2** — Silver (clean / dedupe / schema enforcement)
-- [ ] **M3** — Gold (aggregated business marts)
+- [x] **M3** — Gold (aggregated business marts)
 - [ ] **M4** — DLT pipeline + data-quality expectations
 - [ ] **M5** — Unity Catalog governance
 - [ ] **M6** — Databricks SQL dashboard

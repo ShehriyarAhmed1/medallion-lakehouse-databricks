@@ -3,10 +3,10 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M03 |
-| **Status** | Draft ⬜ |
+| **Status** | ✅ Completed |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-08 |
-| **Completed** | — |
+| **Completed** | 2026-07-08 |
 | **Depends on** | M2 (Silver) |
 
 ---
@@ -89,16 +89,20 @@ answer concrete business questions. Gold is consumption-ready: no row-level deta
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Trips-invariant check (each mart vs 21,847):** —
-- **Row counts per mart:** —
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion
+- **Completed on:** 2026-07-08
+- **What was built:** `gold.daily_metrics`, `gold.hourly_demand`, `gold.top_pickup_zones` via
+  [`src/gold/03_gold_marts.py`](../src/gold/03_gold_marts.py).
+- **Acceptance criteria:** ✅ all met.
+- **Trips-invariant check (each mart vs 21,847):** ✅ all three marts `sum(trips) = 21,847` == Silver.
+- **Row counts per mart:** `daily_metrics` = 60 rows (2016-01-01 → 2016-02-29); `hourly_demand` = one row
+  per `pickup_hour` (0–23); `top_pickup_zones` = one row per distinct `pickup_zip` (sorted by trips desc).
+- **Deviations from spec & why:** none. Note: source data spans Jan–Feb 2016 (60 days), richer than the
+  single month originally assumed — better for the daily trend chart (visible Jan-23 blizzard dip).
+- **Commit(s):** `feat(m03-gold): implement + verify Gold business marts` (this commit).
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-08 | Spec drafted |
+| 2026-07-08 | Implemented + verified (all marts reconcile to 21,847); marked ✅ Completed |
