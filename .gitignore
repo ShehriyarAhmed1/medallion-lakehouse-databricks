@@ -1,0 +1,25 @@
+# --- Internal / not for public publication ---
+Updated_Project_List.pdf
+
+# --- Claude Code / Spec Kit local-only ---
+.claude/settings.local.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.ipynb_checkpoints/
+
+# --- Databricks local artifacts ---
+.databricks/
+
+# --- Secrets / credentials ---
+*.pem
+*.key
+.secrets/
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
