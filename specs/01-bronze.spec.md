@@ -3,10 +3,10 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M01 |
-| **Status** | Draft ⬜ |
+| **Status** | ✅ Completed |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-08 |
-| **Completed** | — |
+| **Completed** | 2026-07-08 |
 | **Depends on** | M0 (planning) |
 
 ---
@@ -101,16 +101,21 @@ Real enforcement (drop/quarantine) happens in **Silver (M2)**.
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Actual output schema / row counts:** —
-- **Actual namespace used:** —
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion
+- **Completed on:** 2026-07-08
+- **What was built:** `nyc_taxi.bronze.trips_raw` (managed Delta table) via
+  [`src/bronze/01_bronze_ingest.py`](../src/bronze/01_bronze_ingest.py) — reads `samples.nyctaxi.trips`,
+  adds `_source` + `_ingested_at`, writes with `overwrite`.
+- **Acceptance criteria:** ✅ all met.
+- **Actual output schema / row counts:** 8 columns (6 source unchanged + `_source` string +
+  `_ingested_at` timestamp); **21,932 rows**, equal to source → no loss, no duplication.
+- **Actual namespace used:** `nyc_taxi.bronze.trips_raw` — `CREATE CATALOG` succeeded (no Free Edition
+  restriction on this account).
+- **Deviations from spec & why:** none. Idempotency guaranteed by `overwrite` write mode.
+- **Commit(s):** `feat(m01-bronze): implement + verify Bronze raw ingestion` (this milestone commit).
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-08 | Spec drafted |
+| 2026-07-08 | Implemented + verified (21,932 rows match source); marked ✅ Completed |
