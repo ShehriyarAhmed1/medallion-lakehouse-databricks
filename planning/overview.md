@@ -74,7 +74,7 @@ Each milestone gets its own spec file in [`../specs/`](../specs/) and its own co
 | M0 | Planning & repo setup | *(this folder)* | ✅ Done |
 | M1 | Bronze — raw ingestion | `specs/01-bronze.spec.md` | ✅ Done |
 | M2 | Silver — clean / dedupe / schema enforcement | `specs/02-silver.spec.md` | ✅ Done |
-| M3 | Gold — aggregated business marts | `specs/03-gold.spec.md` | ⬜ Not started |
+| M3 | Gold — aggregated business marts | `specs/03-gold.spec.md` | 📝 Spec drafted |
 | M4 | DLT pipeline + data-quality expectations | `specs/04-dlt-pipeline.spec.md` | ⬜ Not started |
 | M5 | Unity Catalog governance | `specs/05-unity-catalog.spec.md` | ⬜ Not started |
 | M6 | Databricks SQL dashboard | `specs/06-sql-dashboard.spec.md` | ⬜ Not started |
