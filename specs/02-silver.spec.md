@@ -3,10 +3,10 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M02 |
-| **Status** | Draft ⬜ |
+| **Status** | ✅ Completed |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-08 |
-| **Completed** | — |
+| **Completed** | 2026-07-08 |
 | **Depends on** | M1 (Bronze) |
 
 ---
@@ -95,16 +95,23 @@ so Gold aggregations are easy.
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Row accounting (bronze → deduped → silver + quarantine):** —
-- **Reject counts by reason:** —
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion
+- **Completed on:** 2026-07-08
+- **What was built:** `nyc_taxi.silver.trips_clean` + `nyc_taxi.quarantine.trips_invalid` via
+  [`src/silver/02_silver_clean.py`](../src/silver/02_silver_clean.py).
+- **Acceptance criteria:** ✅ all met (at the data level — see deviation on nullability metadata).
+- **Row accounting (bronze → deduped → silver + quarantine):** 21,932 bronze → 21,932 deduped
+  (0 exact duplicates) → **21,847 Silver + 85 quarantine = 21,932**. Accounting closes ✅.
+- **Reject counts by reason:** `bad_distance` = 75, `bad_fare` = 10 (85 total).
+- **Deviations from spec & why:**
+  1. 0 duplicates found in the sample data — dedup logic is in place and correct regardless.
+  2. Silver column metadata is `nullable = true` (Spark default) even though key values are non-null by
+     construction. True `NOT NULL` enforcement is deferred to DLT expectations (M4). Data-level not-null
+     is satisfied.
+- **Commit(s):** `feat(m02-silver): implement + verify Silver clean/dedupe/quarantine` (this commit).
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-08 | Spec drafted |
+| 2026-07-08 | Implemented + verified (21,847 silver / 85 quarantine; accounting closes); marked ✅ Completed |
