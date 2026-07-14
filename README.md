@@ -33,7 +33,17 @@ Databricks Free Edition · Delta Lake · Lakeflow Declarative Pipelines (DLT) ·
 | [`specs/`](specs/) | One spec per milestone (spec-first) |
 | `src/` | PySpark / DLT implementation (added per milestone) |
 | `sql/` | Databricks SQL dashboard queries |
-| `docs/` | Diagrams & screenshots |
+| [`docs/`](docs/) | Explain-first diagrams & walkthroughs (below) |
+
+## Diagrams & docs
+
+Explanation-first views — open these to understand or defend any part of the project:
+
+- [Architecture](docs/architecture.md) — overall diagram, component communication, and *why each technology is here*.
+- [Data flow](docs/data-flow.md) — row/column flow with the real verified counts (21,932 → 21,847 + 85 → marts).
+- [Pipeline flow](docs/pipeline-flow.md) — the DLT dataset DAG and data-quality expectations.
+- [Execution flow](docs/execution-flow.md) — the run lifecycle from entry point to finish.
+- [Folder structure](docs/folder-structure.md) — every folder & file justified.
 
 ## Milestones
 
