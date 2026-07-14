@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M04 |
-| **Status** | Draft ⬜ |
+| **Status** | In Progress 🔨 — pipeline code written & documented; **pending workspace run** |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-08 |
 | **Completed** | — |
@@ -86,16 +86,35 @@ development/prototype record.
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Pipeline run result (dataset row counts, expectation pass rates):** —
-- **Actual dataset-reference syntax used:** —
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion  *(run-result fields pending the workspace run)*
+- **Completed on:** — *(fill after a green run)*
+- **What was built:** `src/pipelines/medallion_pipeline.py` — one Lakeflow Declarative Pipeline
+  (`from pyspark import pipelines as dp`) defining all 6 datasets: `bronze_trips_raw` (MV),
+  `deduped_flagged` (temporary view — dedupe + `_reject_reason`), `silver_trips_clean`
+  (MV + `@dp.expect_all_or_drop` on the 4 `valid_*` rules), `silver_quarantine` (MV, the
+  complementary rejected set), and `gold_daily_metrics` / `gold_hourly_demand` /
+  `gold_top_pickup_zones` (MVs). API confirmed against the Databricks LDP Python reference.
+- **Acceptance criteria:** ⬜ pending — every criterion in §5 requires running the pipeline in the
+  workspace (row counts, pass-rate metrics, "runs green"), which is done by the operator, not in code.
+- **Pipeline run result (dataset row counts, expectation pass rates):** — *(expected, from M2: silver ≈
+  21,847; quarantine ≈ 85 = 75 `bad_distance` + 10 `bad_fare`; each gold mart sums to silver. Confirm on run.)*
+- **Actual dataset-reference syntax used:** — *(code uses short unqualified names via
+  `spark.read.table("<name>")`; record here if the `nyc_taxi.medallion.<name>` fallback was needed.)*
+- **Deviations from spec & why:**
+  1. **Intermediate view named `deduped_flagged`** (spec §4 called it a "temporary view" without a name).
+     Avoids a leading-underscore identifier, which would need quoting as a table name.
+  2. **Safe-division guard on `avg_speed_mph`** (`F.when(trip_duration_min > 0, …)`). The M2 notebook derived
+     columns *after* filtering to valid rows; a pipeline lets expectations drop rows *after* the function
+     returns, so a transient `duration = 0` row (a `bad_times` reject) would divide by zero and, under Spark
+     ANSI mode, raise. Valid rows are unaffected — identical values to M2.
+  3. **No `ORDER BY` in the Gold marts.** A Delta table has no guaranteed read order, so sorting a stored
+     table is a no-op that only adds a shuffle. Ordering is applied in the SQL dashboard query (M6).
+  4. **Target schema `medallion` is set in pipeline settings, not in code** — that's where LDP takes the
+     target catalog/schema, keeping the source portable.
+- **Commit(s):** — *(fill after committing)*
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-08 | Spec drafted |
+| 2026-07-13 | Pipeline implemented (`src/pipelines/medallion_pipeline.py`); deviations recorded; pending workspace run |
