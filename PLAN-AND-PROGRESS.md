@@ -92,7 +92,7 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | M0 | Planning & repo setup (F1 re-plan) | ✅ Done | [`planning/`](planning/) |
 | M1 | Bronze — CSV upload + raw ingestion (14 tables) | ✅ Done | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
 | M2 | Silver — type / clean / conform / dedupe | ✅ Done | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
-| M3 | Gold — business marts | ⬜ Next | `specs/03-gold.spec.md` |
+| M3 | Gold — business marts | 🔨 Built — pending operator run | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
 | M4 | DLT pipeline + expectations | ⬜ Planned | `specs/04-dlt-pipeline.spec.md` |
 | M5 | Unity Catalog governance | ⬜ Planned | — |
 | M6 | Databricks SQL dashboard | ⬜ Planned | — |
@@ -123,10 +123,13 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
   `sprint_results` 2 (2026 Miami sprint, missing status). DNFs kept as real NULLs; all 13 scheduled
   2026 races preserved; `lap_times` key verified unique.
 
-### ⬜ M3 — Gold
-Joined, dashboard-ready marts answering concrete questions — planned candidates: driver season/career
-summaries, constructor season standings, pit-stop evolution by season, circuit statistics. Final list
-locked in the M3 spec; every mart must reconcile back to Silver counts.
+### 🔨 M3 — Gold *(built — pending the operator's run)*
+Four marts locked in the spec: `driver_season_summary` (3,254 rows predicted), `constructor_season_summary`
+(1,132), `pit_stop_evolution` (33 seasons, 1994–2026), `circuit_stats` (78). Built:
+[`src/gold/03_gold_marts.py`](src/gold/03_gold_marts.py) — the project's first joins, 14 reconciliation
+checks against **golden numbers pre-computed from source** (Σpoints 56,520.1 · Σwins 1,161 — the two
+season marts must also agree with each other), plus the first charts (Hamilton 106 · Schumacher 91 ·
+Verstappen 71 wins as the sanity anchor).
 
 ### ⬜ M4–M7
 One DLT pipeline with native expectations (M4) → governance comments/tags/grants (M5) → SQL dashboard
@@ -170,9 +173,9 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-Draft **`specs/03-gold.spec.md`** — the business marts: which questions each mart answers, its full
-column contract, and the reconciliation rule (every mart must tie back to Silver counts) — then the
-hands-on notebook with chart visualizations as the milestone's visible surface.
+**Operator runs the M3 runbook** ([spec §7](specs/03-gold.spec.md)): pull `main`, run
+`src/gold/03_gold_marts` cell by cell — the first joins, four marts, the 14-check reconciliation
+verdict, and three charts — then report the numbers for the Completion section.
 
 ---
 
