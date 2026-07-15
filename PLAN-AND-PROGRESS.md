@@ -87,7 +87,7 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 |---|-----------|--------|------|
 | M0 | Planning & repo setup (F1 re-plan) | ✅ Done | [`planning/`](planning/) |
 | M1 | Bronze — CSV upload + raw ingestion (14 tables) | ✅ Done | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
-| M2 | Silver — type / clean / conform / dedupe | ⬜ Next | `specs/02-silver.spec.md` |
+| M2 | Silver — type / clean / conform / dedupe | 🔨 Built — pending operator run | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
 | M3 | Gold — business marts | ⬜ Planned | `specs/03-gold.spec.md` |
 | M4 | DLT pipeline + expectations | ⬜ Planned | `specs/04-dlt-pipeline.spec.md` |
 | M5 | Unity Catalog governance | ⬜ Planned | — |
@@ -108,9 +108,14 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 - **Verified result (operator's own run, 2026-07-15):** **14/14 tables ✅ · 1,002,649 rows = source
   exactly** — no loss, no duplication, no header leaks; idempotent overwrite writes.
 
-### ⬜ M2 — Silver
-Typed casts (`\N` → NULL, dates, numerics), de-duplication on declared natural keys, referential and
-range expectations; violating rows quarantined with a reason. **Row accounting must close** per table.
+### 🔨 M2 — Silver *(built — pending the operator's run)*
+Typed casts (`\N` → NULL, dates, numerics), snake_case conforming, natural-key dedup, referential +
+domain rules; violating rows quarantined **with a reason**. Rules were designed against a **full local
+scan of the source**, which predicts exactly what the run should catch: `lap_times` **2,251**
+quarantined (duplicate laps, 1988 & 1989 Brazilian GPs) + `sprint_results` **2** (2026 Miami sprint,
+status missing) + zeros elsewhere → **silver 1,000,396 + quarantine 2,253 = bronze 1,002,649**.
+Built: [`src/silver/02_silver_clean.py`](src/silver/02_silver_clean.py). **Row accounting must close**
+per table — that's the acceptance gate.
 
 ### ⬜ M3 — Gold
 Joined, dashboard-ready marts answering concrete questions — planned candidates: driver season/career
@@ -159,10 +164,11 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-Draft **`specs/02-silver.spec.md`** — the Silver contracts: per-table typed schemas, `\N`→NULL, date
-and numeric casts, natural-key dedup rules, referential checks against the dimension tables, and the
-quarantine design — then implement as a hands-on notebook and verify that **row accounting closes**
-for every table (`bronze = silver + quarantine`).
+**Operator runs the M2 runbook** ([spec §7](specs/02-silver.spec.md)): pull `main` in the workspace
+Git folder, run `src/silver/02_silver_clean` cell by cell — see the 1988/89 Brazilian GP duplicate
+laps with your own eyes, process all 14 tables, and get the accounting verdict
+(`bronze = silver + quarantine`, 14/14 ✅, quarantine matching the predictions) — then record the
+numbers in the spec's Completion section.
 
 ---
 
