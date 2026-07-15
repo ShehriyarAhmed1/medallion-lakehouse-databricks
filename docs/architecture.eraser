@@ -1,35 +1,50 @@
-// F1 Medallion Lakehouse — main data flow
-// How to use: eraser.io → new file → Diagram as code → Flow chart → paste this in.
-// Same picture as docs/architecture.md §2 (Mermaid); this version is for slide-quality exports.
+// F1 Medallion Lakehouse — main data flow (simple but strong, with logos)
+//
+// How to use:
+//   eraser.io → New file → "Diagram as code" → type: Cloud Architecture Diagram → paste this.
+//   Icons come from Eraser's built-in sets (Tech Logos + General). If any icon name
+//   doesn't resolve in your workspace, click the node and pick it from the icon search —
+//   or upload a custom icon (e.g. Delta Lake / Unity Catalog logos).
+//
+// Same picture as docs/architecture.md §2 — this version is for slide-quality exports.
 
-title F1 Medallion Lakehouse — Data Flow
+direction right
+colorMode bold
+styleMode shadow
+typeface clean
 
-Local Machine [icon: laptop] {
-  F1 CSVs [icon: file-text, label: "14 F1 CSVs — 1.0M rows (snapshot 2026-07-05)"]
+laptop [icon: laptop, label: "Your laptop"] {
+  csvs [icon: file, label: "F1 CSVs — 14 files · 1.0M rows (1950–2026)"]
 }
 
-Databricks Free Edition — catalog f1 [icon: cloud] {
-  Landing Volume [icon: folder, label: "/Volumes/f1/landing/ergast_csv"]
+dbx [icon: databricks, label: "Databricks Free Edition — Unity Catalog: f1"] {
+  volume [icon: folder, label: "Landing volume  /Volumes/f1/landing/ergast_csv"]
 
-  One Lakeflow DLT Pipeline + expectations (M4) [icon: settings] {
-    Bronze [icon: database, color: brown, label: "bronze — 14 raw Delta tables (as-is + ingest metadata)"]
-    Silver [icon: database, color: grey, label: "silver — typed, cleaned, deduped (source of truth)"]
-    Gold [icon: database, color: yellow, label: "gold — business marts (joined + aggregated)"]
+  pipeline [icon: workflow, label: "One Lakeflow DLT pipeline + expectations (M4)"] {
+    bronze [icon: database, color: "#A96832", label: "Bronze — 14 raw tables (immutable)"]
+    silver [icon: database, color: "#76808C", label: "Silver — typed · clean · deduped"]
+    gold   [icon: database, color: "#C9A227", label: "Gold — business marts"]
   }
 
-  Quarantine [icon: alert-triangle, color: orange, label: "quarantine — violating rows + reason (never dropped)"]
-  SQL Dashboard [icon: bar-chart, label: "Databricks SQL dashboard — 3+ business questions"]
+  quarantine [icon: alert-triangle, color: "#D97706", label: "Quarantine — bad rows + reason"]
+  dashboard  [icon: bar-chart, color: "#D40600", label: "Databricks SQL dashboard"]
 }
 
-F1 CSVs > Landing Volume: UI upload, one-time (M1)
-Landing Volume > Bronze: ingest as-is (M1)
-Bronze > Silver: cast, clean, conform, dedupe (M2)
-Silver > Gold: join, aggregate (M3)
-Silver > Quarantine: failed expectations (M2)
-Gold > SQL Dashboard: serve (M6)
+github [icon: github, label: "GitHub — specs + code (source of truth)"]
+
+// Data flow (forward only)
+csvs > volume: upload (M1)
+volume > bronze: ingest as-is (M1)
+bronze > silver: clean · type · dedupe (M2)
+silver > gold: join · aggregate (M3)
+silver > quarantine: failed checks (M2)
+gold > dashboard: serve (M6)
+
+// Code flow
+github > dbx: Git folder (mirrored)
 
 // Rules the arrows obey (constitution):
-// 1. Forward only — never backward, never skip a layer.
-// 2. Bronze is immutable; re-runs start from Bronze, never from re-upload.
-// 3. Row accounting closes: bronze = silver + quarantine, per table.
-// 4. The whole B->S->G flow is ONE declarative pipeline.
+//   1. Forward only — never backward, never skip a layer.
+//   2. Bronze is immutable; re-runs start from Bronze, never from re-upload.
+//   3. Row accounting closes: bronze = silver + quarantine, per table.
+//   4. The whole B→S→G flow is ONE declarative pipeline.
