@@ -51,8 +51,14 @@ quota). No idle compute. Every artifact is pushed to Git so nothing is trapped i
   implement → verify → mark complete.
 - **One milestone = one spec = one (or few) commit(s)** with a **verbose** message describing what and why.
 - **Documented for a learner:** every non-trivial transformation explains its *why* in comments.
-- **Acceptance gate:** a milestone is "done" only when its spec's acceptance criteria are verified; the
-  spec's **Completion** section is then filled in and committed.
+- **Hands-on & visible (v1.2.0):** the operator executes every workspace step personally — uploads,
+  catalog creation, notebook runs, pipeline runs. Implementations are **notebooks designed for
+  cell-by-cell runs** with visible output (`display()`, verdict tables) after every meaningful step —
+  never opaque scripts. Every milestone spec includes an **operator runbook** (numbered UI steps +
+  what should be visible after each), and every milestone ends on a **visible surface** — notebook
+  output, the DLT pipeline graph, Catalog Explorer, or a dashboard. No invisible, code-only milestones.
+- **Acceptance gate:** a milestone is "done" only when its spec's acceptance criteria are verified
+  **by the operator's own run**; the spec's **Completion** section is then filled in and committed.
 
 ## Governance
 
@@ -66,8 +72,11 @@ Any deviation from a principle in a spec or implementation must be explicitly ju
 milestone's spec.
 
 **Amendment history:**
+- **1.2.0 (2026-07-15)** — Development Workflow: added the **Hands-on & visible** rule (operator runs
+  every workspace step personally; notebooks with cell-by-cell visible output; every milestone defines
+  an operator runbook and ends on a visible surface). Requested by the owner before M1.
 - **1.1.0 (2026-07-15)** — Technology Constraints: data source changed from the built-in NYC Taxi
   `samples` dataset to the Formula 1 (Ergast-schema) CSV snapshot uploaded into a Unity Catalog volume.
   Project restarted on the new dataset; the six core principles are unchanged.
 
-**Version:** 1.1.0 | **Ratified:** 2026-07-08 | **Last Amended:** 2026-07-15
+**Version:** 1.2.0 | **Ratified:** 2026-07-08 | **Last Amended:** 2026-07-15

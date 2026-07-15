@@ -51,8 +51,14 @@ for a learner.>
 - [ ] Expectations wired; quarantine/violation counts logged.
 - [ ] Code committed; documented for a learner.
 
-## 7. Deployment notes
-<Where/how this runs in the workspace; any Free Edition considerations.>
+## 7. Hands-on run & verification (operator runbook)
+<Numbered steps the OPERATOR performs in the workspace UI — every step run by hand, nothing invisible.
+Each step states what to click/run AND what should be visible afterwards. End on the milestone's
+visible surface (verdict table, pipeline graph, dashboard…). Include Free Edition considerations.>
+
+| # | You do | You should see |
+|---|--------|----------------|
+| 1 | … | … |
 
 ## 8. Constitution compliance
 <Confirm alignment with planning/constitution.md; justify any deviation.>

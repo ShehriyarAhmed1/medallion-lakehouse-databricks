@@ -12,7 +12,7 @@
 | Milestones complete | **1 / 8** (M0 done) | Planning re-done for the F1 dataset; build not started |
 | Dataset | **Formula 1 (Ergast schema)** | 14 relational CSVs, snapshot 2026-07-05 |
 | Coverage | **1950 → 2026 (in progress)** | results through the 2026 British GP |
-| Source rows | **1,002,639** | verified by counting the actual files |
+| Source rows | **1,002,649** | verified by counting the actual files |
 | Largest table | `lap_times` — **876,204 rows** | every lap by every driver since 1996 |
 
 **Previous build:** the same architecture was fully built and verified on the NYC Taxi sample
@@ -74,7 +74,7 @@ clean — exactly what Silver and the quality expectations are for:
 
 Key tables (verified row counts): `races` 1,171 · `results` 27,436 · `drivers` 865 · `constructors` 214 ·
 `circuits` 78 · `qualifying` 11,168 · `pit_stops` 22,475 · `lap_times` 876,204 · plus standings and
-lookup tables — **1,002,639 rows total**.
+lookup tables — **1,002,649 rows total**.
 
 ---
 
@@ -86,7 +86,7 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | # | Milestone | Status | Spec |
 |---|-----------|--------|------|
 | M0 | Planning & repo setup (F1 re-plan) | ✅ Done | [`planning/`](planning/) |
-| M1 | Bronze — CSV upload + raw ingestion (14 tables) | ⬜ Next | `specs/01-bronze.spec.md` |
+| M1 | Bronze — CSV upload + raw ingestion (14 tables) | 📝 Spec drafted | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
 | M2 | Silver — type / clean / conform / dedupe | ⬜ Planned | `specs/02-silver.spec.md` |
 | M3 | Gold — business marts | ⬜ Planned | `specs/03-gold.spec.md` |
 | M4 | DLT pipeline + expectations | ⬜ Planned | `specs/04-dlt-pipeline.spec.md` |
@@ -156,9 +156,10 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-Draft **`specs/01-bronze.spec.md`** — the Bronze data contract for all 14 tables (columns as-ingested,
-ingest metadata, per-table acceptance row counts from the verified source figures above) — then
-implement and verify it in the workspace.
+Implement **M1 Bronze**: build the `src/bronze/01_bronze_ingest` notebook against the drafted spec,
+then the operator runs the spec's §7 runbook by hand — catalog/schema/volume creation, CSV upload,
+cell-by-cell ingest, and the 14/14 ✅ verification verdict table — and records results in the spec's
+Completion section.
 
 ---
 

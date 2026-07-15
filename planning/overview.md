@@ -72,7 +72,7 @@ The 14 files, with verified row counts (excluding headers):
 | `constructor_standings.csv` | 13,730 | Constructor standings after each race |
 | `constructor_results.csv` | 12,964 | Constructor points per race |
 
-**Total ≈ 1,002,639 rows.** Known quirks to handle in Silver: `\N` NULL markers, duration/time strings,
+**Total: 1,002,649 rows.** Known quirks to handle in Silver: `\N` NULL markers, duration/time strings,
 future scheduled races without results, and standings tables that must reconcile with `results`.
 
 ## 5. Technology stack
@@ -110,7 +110,7 @@ Each milestone gets its own spec file in [`../specs/`](../specs/) and its own co
 | # | Milestone | Spec file | Status |
 |---|-----------|-----------|--------|
 | M0 | Planning & repo setup | *(this folder)* | ✅ Done |
-| M1 | Bronze — CSV upload + raw ingestion (14 tables) | `specs/01-bronze.spec.md` | ⬜ Not started |
+| M1 | Bronze — CSV upload + raw ingestion (14 tables) | `specs/01-bronze.spec.md` | 📝 Spec drafted |
 | M2 | Silver — type / clean / conform / dedupe | `specs/02-silver.spec.md` | ⬜ Not started |
 | M3 | Gold — aggregated business marts | `specs/03-gold.spec.md` | ⬜ Not started |
 | M4 | DLT pipeline + data-quality expectations | `specs/04-dlt-pipeline.spec.md` | ⬜ Not started |
