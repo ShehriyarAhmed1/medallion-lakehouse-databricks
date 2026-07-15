@@ -2,11 +2,12 @@
 
 > **Status:** Planning
 > **Owner:** Shehriyar Ahmed
-> **Last updated:** 2026-07-08
+> **Last updated:** 2026-07-15
 > **Scope:** *Who* deploys, *where* it runs, and *how* it gets there.
 
-This document answers the operational questions: where does this project live, how does code get from
-this GitHub repo into a running lakehouse, and how do we keep it reproducible and inside the free tier.
+This document answers the operational questions: where does this project live, how do code **and data**
+get from the developer's machine into a running lakehouse, and how do we keep it reproducible and inside
+the free tier.
 
 ---
 
@@ -15,7 +16,7 @@ this GitHub repo into a running lakehouse, and how do we keep it reproducible an
 | Role | Person | Responsibility |
 |------|--------|----------------|
 | Developer / Data Engineer | Shehriyar Ahmed | Writes specs, notebooks, DLT pipeline, dashboard |
-| Operator / Deployer | Shehriyar Ahmed | Runs the pipeline, manages the workspace, monitors quota |
+| Operator / Deployer | Shehriyar Ahmed | Uploads CSVs, runs the pipeline, manages the workspace, monitors quota |
 | Reviewer | Manager | Reviews specs, structure, and completed milestones |
 
 Single-owner project — the developer is also the operator. (Section 8 notes how roles would split in a
@@ -28,41 +29,50 @@ real production team.)
 | Platform | **Databricks Free Edition** (serverless, free forever) |
 | Region / cloud | Managed by Databricks (Free Edition; no cloud account needed) |
 | Governance root | **Unity Catalog** — 1 metastore (auto-provisioned) |
-| Catalog | `nyc_taxi` (created in-workspace) |
-| Schemas | `bronze`, `silver`, `gold`, `quarantine` |
+| Catalog | `f1` (created in-workspace) |
+| Schemas | `landing` (raw file volume), `bronze`, `silver`, `gold`, `quarantine` |
+| Landing volume | `/Volumes/f1/landing/ergast_csv/` — the 14 uploaded CSVs |
 | Compute | Serverless (notebooks + DLT); **1 SQL warehouse, 2X-Small** for the dashboard |
-| Source data | Built-in `samples.nyctaxi.trips` (no external network) |
+| Source data | **Local F1 CSVs uploaded via the workspace UI** (no external network) |
 
-**Namespace convention:** every table is addressed as `nyc_taxi.<layer>.<table>`
-(e.g. `nyc_taxi.silver.trips_clean`).
+**Namespace convention:** every table is addressed as `f1.<layer>.<table>`
+(e.g. `f1.silver.results`). The layer lives in the schema name, so table names stay clean —
+`f1.bronze.results` (raw strings) vs `f1.silver.results` (typed & trusted).
 
 ## 3. What gets deployed
 
-1. **Layer logic** — PySpark / DLT transformation code in `src/` (Bronze, Silver, Gold).
-2. **One Lakeflow Declarative Pipeline (DLT)** — wires Bronze → Silver → Gold with expectations and a
-   quarantine table. (Free Edition allows 1 active pipeline per type.)
-3. **SQL dashboard** — queries in `sql/`, published as a Databricks SQL dashboard on the Gold tables.
-4. **Governance metadata** — catalog/schema/table comments and tags applied via Unity Catalog.
+1. **Data** — the 14 Ergast CSVs, uploaded once into the `landing` volume (re-uploaded only if the
+   snapshot is refreshed; the snapshot date is recorded in the Bronze spec).
+2. **Layer logic** — PySpark / DLT transformation code in `src/` (Bronze, Silver, Gold).
+3. **One Lakeflow Declarative Pipeline (DLT)** — wires Bronze → Silver → Gold with expectations and
+   quarantine tables. (Free Edition allows 1 active pipeline per type.)
+4. **SQL dashboard** — queries in `sql/`, published as a Databricks SQL dashboard on the Gold tables.
+5. **Governance metadata** — catalog/schema/table comments and tags applied via Unity Catalog.
 
 ## 4. How — deployment runbook
 
 Code lives in **GitHub** (source of truth) and is brought into Databricks via **Git folders**
-(Databricks Repos), so the workspace mirrors the repo — no copy-paste drift.
+(Databricks Repos), so the workspace mirrors the repo — no copy-paste drift. Data travels the only
+route Free Edition allows: a **UI upload** into a Unity Catalog volume.
 
 ```
 GitHub (this repo)  ──git──▶  Databricks Git folder  ──▶  DLT pipeline + notebooks + SQL
       ▲                                                          │
       └──────────────── commit specs & code ◀────────────────────┘
+
+Local ~/Downloads/F1/*.csv  ──UI upload──▶  /Volumes/f1/landing/ergast_csv/
 ```
 
 **Steps:**
 1. Create the Databricks Free Edition workspace (one-time).
 2. In the workspace: **Git folders → clone** `https://github.com/ShehriyarAhmed1/medallion-lakehouse-databricks`.
-3. Create the Unity Catalog objects: catalog `nyc_taxi` + schemas `bronze/silver/gold/quarantine`.
-4. Create a **DLT pipeline** pointing at the pipeline source in `src/`; set target catalog/schema.
-5. **Run** the pipeline (triggered/manual). Verify expectations & quarantine counts.
-6. Attach the pre-created **serverless SQL warehouse** and build the dashboard from `sql/`.
-7. Commit any changes back to GitHub (specs updated, screenshots into `docs/`).
+3. Create the Unity Catalog objects: catalog `f1` + schemas `landing / bronze / silver / gold / quarantine`,
+   and volume `f1.landing.ergast_csv`.
+4. **Upload the 14 CSVs** from the local machine into the volume (Catalog Explorer → volume → Upload).
+5. Create a **DLT pipeline** pointing at the pipeline source in `src/`; set target catalog/schema.
+6. **Run** the pipeline (triggered/manual). Verify expectations & quarantine counts against the specs.
+7. Attach the pre-created **serverless SQL warehouse** and build the dashboard from `sql/`.
+8. Commit any changes back to GitHub (specs updated, screenshots into `docs/`).
 
 > **Note on Databricks Asset Bundles (DAB):** the "proper" CI/CD way to deploy pipelines/jobs as code.
 > We keep the repo DAB-ready (declarative pipeline definition in `src/`) but, given a single Free Edition
@@ -76,34 +86,40 @@ Free Edition gives **one** workspace, so we run a **single environment**. We sim
 | Real-world | This project (Free Edition) |
 |------------|-----------------------------|
 | dev / staging / prod workspaces | one workspace |
-| prod catalog vs dev catalog | one `nyc_taxi` catalog, layered schemas |
+| prod catalog vs dev catalog | one `f1` catalog, layered schemas |
 | blue/green deploys | DLT **full refresh** re-materializes tables |
 
 ## 6. Orchestration & scheduling
 
 - v1: DLT pipeline run **manually / triggered** (keeps compute usage deliberate).
-- Optional: a scheduled trigger (respecting the 5-concurrent-task limit) once the pipeline is stable.
+- The source is a static snapshot, so there is no schedule to keep — a re-run only matters after a
+  code change or a refreshed CSV upload.
 
 ## 7. Cost & quota management (free-tier discipline)
 
 - Use the smallest compute (serverless defaults; 2X-Small SQL warehouse).
 - **Never leave compute idling** — stop the warehouse when not querying.
 - Watch the daily quota; if compute cuts off, data & settings survive — resume next day.
+- The full dataset is ~28 MB of CSV / ~1.0M rows — trivially inside storage limits; the only quota to
+  respect is compute time.
 - **Everything is pushed to GitHub** so nothing is trapped if the workspace compute is unavailable.
 
 ## 8. Reproducibility, rollback & recovery
 
-- **Reproducible:** a clean DLT full-refresh rebuilds identical Gold from the same source.
+- **Reproducible:** a clean DLT full-refresh rebuilds identical Gold from the same landed CSVs; the
+  CSV snapshot itself is immutable in the volume.
 - **Rollback:** Delta **time travel** (`VERSION AS OF`) to inspect/restore prior table states.
-- **Recovery:** code + specs in GitHub; workspace objects can be re-created from the runbook above.
+- **Recovery:** code + specs in GitHub; the CSVs remain on the local machine (and in the volume);
+  workspace objects can be re-created from the runbook above.
 
 ## 9. Security & governance
 
 - Unity Catalog owns access control (single-user here; documented grants for the reviewer).
 - No secrets in the repo (`.gitignore` covers keys/tokens); the internal project-list PDF is not published.
+- The dataset is public domain sports data — no PII concerns beyond public figures' names/DOBs.
 
 ## 10. Future / production hardening (out of scope for v1)
 
 - Databricks Asset Bundles + GitHub Actions for CI/CD deploys.
 - Separate dev/prod catalogs; automated pipeline scheduling & alerting.
-- Incremental/streaming ingestion (Auto Loader / streaming tables) — see project #11.
+- Incremental ingestion (Auto Loader on the volume) for refreshed snapshots — see project #11.

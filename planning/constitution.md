@@ -41,7 +41,8 @@ quota). No idle compute. Every artifact is pushed to Git so nothing is trapped i
 
 - Platform: Databricks Free Edition. Formats/tools: Delta Lake, Lakeflow DLT, Unity Catalog, PySpark,
   Databricks SQL.
-- Data source: NYC Taxi via the built-in `samples` dataset only (outbound internet is restricted).
+- Data source: the Formula 1 (Ergast-schema) CSV snapshot, **uploaded from the local machine** into a
+  Unity Catalog volume (outbound internet is restricted — no live downloads or APIs).
 - No paid features, no external services, no data leaving the workspace.
 
 ## Development Workflow
@@ -64,4 +65,9 @@ bump using semantic versioning:
 Any deviation from a principle in a spec or implementation must be explicitly justified in that
 milestone's spec.
 
-**Version:** 1.0.0 | **Ratified:** 2026-07-08 | **Last Amended:** 2026-07-08
+**Amendment history:**
+- **1.1.0 (2026-07-15)** — Technology Constraints: data source changed from the built-in NYC Taxi
+  `samples` dataset to the Formula 1 (Ergast-schema) CSV snapshot uploaded into a Unity Catalog volume.
+  Project restarted on the new dataset; the six core principles are unchanged.
+
+**Version:** 1.1.0 | **Ratified:** 2026-07-08 | **Last Amended:** 2026-07-15

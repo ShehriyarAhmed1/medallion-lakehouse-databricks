@@ -33,7 +33,7 @@
 |--------|------|----------|-----|-------------|
 | … | … | … | … | … |
 
-- **Table:** `nyc_taxi.<layer>.<table>` (Delta, Unity Catalog)
+- **Table:** `f1.<layer>.<table>` (Delta, Unity Catalog)
 - **Write mode:** <append / overwrite / merge / streaming>
 
 ## 4. Transformation / logic rules
@@ -43,11 +43,11 @@ for a learner.>
 ## 5. Data-quality expectations
 | Expectation | Rule | Action on violation |
 |-------------|------|---------------------|
-| `valid_...` | e.g. `fare_amount >= 0` | drop / quarantine / fail |
+| `valid_...` | e.g. `points >= 0` | drop / quarantine / fail |
 
 ## 6. Acceptance criteria
 - [ ] …
-- [ ] Table exists at `nyc_taxi.<layer>.<table>` with the contracted schema.
+- [ ] Table exists at `f1.<layer>.<table>` with the contracted schema.
 - [ ] Expectations wired; quarantine/violation counts logged.
 - [ ] Code committed; documented for a learner.
 
