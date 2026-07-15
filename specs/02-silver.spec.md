@@ -3,10 +3,10 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M02 |
-| **Status** | In Progress 🔨 (notebook built — pending operator run) |
+| **Status** | ✅ Completed |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-15 |
-| **Completed** | — |
+| **Completed** | 2026-07-15 |
 | **Depends on** | M1 (Bronze) |
 
 ---
@@ -129,14 +129,14 @@ run must reproduce:
 
 ## 6. Acceptance criteria
 
-- [ ] 14 silver + 14 quarantine tables exist (quarantine tables may be empty), typed & snake_case.
-- [ ] **Row accounting closes 14/14:** bronze = silver + quarantine, per table (verdict table).
-- [ ] Quarantine counts match the §5 predictions (2,251 / 2 / zeros) with reasons as predicted.
-- [ ] `silver.races` still has all 13 scheduled 2026 races (calendar not falsely quarantined).
-- [ ] `silver.lap_times` natural key is unique (count = distinct key count).
-- [ ] Spot check: a DNF row shows `position = NULL`, `position_text = 'R'`, typed schema visible.
-- [ ] Operator personally executed every step and saw each result (constitution v1.2.0).
-- [ ] Code committed; documented for a learner.
+- [x] 14 silver + 14 quarantine tables exist (quarantine tables may be empty), typed & snake_case.
+- [x] **Row accounting closes 14/14:** bronze = silver + quarantine, per table (verdict table).
+- [x] Quarantine counts match the §5 predictions (2,251 / 2 / zeros) with reasons as predicted.
+- [x] `silver.races` still has all 13 scheduled 2026 races (calendar not falsely quarantined).
+- [x] `silver.lap_times` natural key is unique (873,953 rows = 873,953 distinct keys — operator-verified).
+- [x] Spot check: a DNF row shows `position = NULL`, `position_text = 'R'`, typed schema visible.
+- [x] Operator personally executed every step and saw each result (constitution v1.2.0).
+- [x] Code committed; documented for a learner.
 
 ## 7. Hands-on run & verification (operator runbook)
 
@@ -166,17 +166,27 @@ run must reproduce:
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Actual output schema / row counts:** —
-- **Quarantine / DQ results:** —
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion
+- **Completed on:** 2026-07-15 — verified by the operator's own cell-by-cell run (constitution v1.2.0);
+  the verdict cell's asserts (accounting + predictions) passed, confirmed by the operator's pasted
+  outputs (lap_times verdict row and the key-uniqueness spot check).
+- **What was built:** 14 typed, snake_case `f1.silver.*` tables + 14 `f1.quarantine.*` tables (12
+  empty) via [`src/silver/02_silver_clean.py`](../src/silver/02_silver_clean.py) — one contract-driven
+  engine applying the §4 eight steps in dependency order.
+- **Acceptance criteria:** all met. **Row accounting closes 14/14: silver 1,000,396 + quarantine
+  2,253 = bronze 1,002,649**, matching the §5 predictions exactly.
+- **Actual output schema / row counts:** per contract; notable splits — `lap_times` 873,953 + 2,251,
+  `sprint_results` 566 + 2, all other tables `N + 0`. `lap_times` natural key verified unique
+  (873,953 = 873,953 distinct).
+- **Quarantine / DQ results:** `exact_duplicate` 1,707 + `key_conflict` 544 (both confined to the
+  1988/1989 Brazilian GP double-load, raceId 372/356) + `missing_status_id` 2 (2026 Miami sprint).
+  DNF positions are real NULLs; the 13 scheduled 2026 races survived in `silver.races`.
+- **Deviations from spec & why:** none.
+- **Commit(s):** `9455bf0` spec draft · `c39a604` implementation · this commit (completion).
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-15 | Spec drafted — rules grounded in a full local scan of the 14 CSVs (predictions in §5) |
 | 2026-07-15 | Implementation built (`src/silver/02_silver_clean.py`) — contracts dict mirrors §3 exactly |
+| 2026-07-15 | ✅ Completed — operator's run reproduced the predictions exactly (1,000,396 + 2,253) |

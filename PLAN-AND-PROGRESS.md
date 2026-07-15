@@ -9,11 +9,15 @@
 
 | Metric | Value | Meaning |
 |--------|-------|---------|
-| Milestones complete | **2 / 8** (M0–M1 done) | Bronze verified in the workspace by the operator's own run |
-| Dataset | **Formula 1 (Ergast schema)** | 14 relational CSVs, snapshot 2026-07-05 |
-| Coverage | **1950 → 2026 (in progress)** | results through the 2026 British GP |
-| Rows ingested → Bronze | **1,002,649 = source exactly** | 14/14 tables ✅ — no loss, no duplication, no header leaks |
-| Largest table | `lap_times` — **876,204 rows** | every lap by every driver since 1996 |
+| Milestones complete | **3 / 8** (M0–M2 done) | Bronze & Silver both verified by the operator's own runs |
+| Dataset | **Formula 1 (Ergast schema)** | 14 relational CSVs, snapshot 2026-07-05, 1950 → 2026-in-progress |
+| Rows ingested → Bronze | **1,002,649 = source exactly** | 14/14 tables ✅ — no loss, no duplication |
+| Trusted rows → Silver | **1,000,396** | typed, snake_case, deduped, FK-verified |
+| Rows quarantined | **2,253** | each with a written reason — **never silently dropped** |
+
+**Row accounting always closes:** `1,000,396 silver + 2,253 quarantine = 1,002,649 bronze` — and the
+quarantine counts matched the source-scan **predictions** exactly (1988/89 Brazilian GP duplicate laps
++ 2 incomplete 2026 Miami sprint rows).
 
 **Previous build:** the same architecture was fully built and verified on the NYC Taxi sample
 (M1–M3 verified, M4 pending) — preserved on branch `archive/nyc-taxi`. This round rebuilds it
@@ -87,8 +91,8 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 |---|-----------|--------|------|
 | M0 | Planning & repo setup (F1 re-plan) | ✅ Done | [`planning/`](planning/) |
 | M1 | Bronze — CSV upload + raw ingestion (14 tables) | ✅ Done | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
-| M2 | Silver — type / clean / conform / dedupe | 🔨 Built — pending operator run | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
-| M3 | Gold — business marts | ⬜ Planned | `specs/03-gold.spec.md` |
+| M2 | Silver — type / clean / conform / dedupe | ✅ Done | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
+| M3 | Gold — business marts | ⬜ Next | `specs/03-gold.spec.md` |
 | M4 | DLT pipeline + expectations | ⬜ Planned | `specs/04-dlt-pipeline.spec.md` |
 | M5 | Unity Catalog governance | ⬜ Planned | — |
 | M6 | Databricks SQL dashboard | ⬜ Planned | — |
@@ -108,14 +112,16 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 - **Verified result (operator's own run, 2026-07-15):** **14/14 tables ✅ · 1,002,649 rows = source
   exactly** — no loss, no duplication, no header leaks; idempotent overwrite writes.
 
-### 🔨 M2 — Silver *(built — pending the operator's run)*
-Typed casts (`\N` → NULL, dates, numerics), snake_case conforming, natural-key dedup, referential +
-domain rules; violating rows quarantined **with a reason**. Rules were designed against a **full local
-scan of the source**, which predicts exactly what the run should catch: `lap_times` **2,251**
-quarantined (duplicate laps, 1988 & 1989 Brazilian GPs) + `sprint_results` **2** (2026 Miami sprint,
-status missing) + zeros elsewhere → **silver 1,000,396 + quarantine 2,253 = bronze 1,002,649**.
-Built: [`src/silver/02_silver_clean.py`](src/silver/02_silver_clean.py). **Row accounting must close**
-per table — that's the acceptance gate.
+### ✅ M2 — Silver (type / clean / conform / dedupe)
+- **What:** `\N` → NULL, typed casts, snake_case, natural-key dedup, domain + referential rules;
+  violations quarantined **with a reason**. Rules designed against a full local scan of the source,
+  which *predicted* the quarantine before the run.
+- **Built:** contract-driven engine [`src/silver/02_silver_clean.py`](src/silver/02_silver_clean.py).
+- **Verified result (operator's own run, 2026-07-15):** accounting closes 14/14 —
+  **1,000,396 trusted + 2,253 quarantined = 1,002,649**, matching predictions exactly:
+  `lap_times` 2,251 (1988/89 Brazilian GP double-load: 1,707 exact duplicates + 544 conflicting),
+  `sprint_results` 2 (2026 Miami sprint, missing status). DNFs kept as real NULLs; all 13 scheduled
+  2026 races preserved; `lap_times` key verified unique.
 
 ### ⬜ M3 — Gold
 Joined, dashboard-ready marts answering concrete questions — planned candidates: driver season/career
@@ -164,11 +170,9 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-**Operator runs the M2 runbook** ([spec §7](specs/02-silver.spec.md)): pull `main` in the workspace
-Git folder, run `src/silver/02_silver_clean` cell by cell — see the 1988/89 Brazilian GP duplicate
-laps with your own eyes, process all 14 tables, and get the accounting verdict
-(`bronze = silver + quarantine`, 14/14 ✅, quarantine matching the predictions) — then record the
-numbers in the spec's Completion section.
+Draft **`specs/03-gold.spec.md`** — the business marts: which questions each mart answers, its full
+column contract, and the reconciliation rule (every mart must tie back to Silver counts) — then the
+hands-on notebook with chart visualizations as the milestone's visible surface.
 
 ---
 

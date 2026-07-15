@@ -17,7 +17,7 @@ _TEMPLATE.spec.md           the template every spec copies
 | # | Milestone | Spec file | Status |
 |---|-----------|-----------|--------|
 | M1 | Bronze — CSV upload + raw ingestion | `01-bronze.spec.md` | ✅ Completed |
-| M2 | Silver — type / clean / conform / dedupe | `02-silver.spec.md` | 🔨 In progress |
+| M2 | Silver — type / clean / conform / dedupe | `02-silver.spec.md` | ✅ Completed |
 | M3 | Gold — aggregated marts | `03-gold.spec.md` | ⬜ Not started |
 | M4 | DLT pipeline + expectations | `04-dlt-pipeline.spec.md` | ⬜ Not started |
 | M5 | Unity Catalog governance | `05-unity-catalog.spec.md` | ⬜ Not started |
