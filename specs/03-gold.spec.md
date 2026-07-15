@@ -79,18 +79,26 @@ points, best_finish, nationality.
 Every total below was computed locally from the CSVs (Silver = source minus quarantine, and
 results/races/pit_stops had **zero** quarantine — so these are exact predictions):
 
-| Check | Expected |
-|-------|----------|
-| driver mart rows | **3,254** · Σraces_entered = **27,436** (= silver.results) · Σpoints = **56,520.1** |
-| driver mart totals | Σwins **1,161** · Σpodiums **3,495** · Σpoles **1,168** · Σdnfs **10,953** |
-| constructor mart rows | **1,132** · Σentries = **27,436** · Σpoints = **56,520.1** (must equal the driver mart's — the triangle check: driver mart = constructor mart = silver) |
-| pit mart | **33 rows (1994–2026)** · Σstops = **22,475** (= silver.pit_stops) |
-| circuit mart | **78 rows** · Σraces_held = **1,171** (= silver.races) |
+| Check | Expected | Tolerance |
+|-------|----------|-----------|
+| driver mart rows | **3,254** · Σraces_entered = **27,436** (= silver.results) | exact |
+| driver mart totals | Σwins **1,161** · Σpodiums **3,495** · Σpoles **1,168** · Σdnfs **10,953** | exact |
+| Σpoints (driver mart) | **≈ 56,520.1** | **±0.5** (see below) |
+| constructor mart rows | **1,132** · Σentries = **27,436** | exact |
+| Σpoints (constructor mart) | ≈ driver mart's (triangle check: driver ≈ constructor ≈ silver) | **±0.5** |
+| pit mart | **33 rows (1994–2026)** · Σstops = **22,475** (= silver.pit_stops) | exact |
+| circuit mart | **78 rows** · Σraces_held = **1,171** (= silver.races) | exact |
 
-> **Known nuance (do NOT assert):** total wins (1,161) exceeds raced races (~1,158) — in the 1950s
-> drivers **shared cars**, so a shared winning car = co-winners. Also: summed race points can
-> legitimately differ from the official `driver_standings` (disqualifications, deductions) — that's
-> why standings live as their own Silver table and Gold aggregates *results*, the raw truth.
+> **Why points get a ±0.5 tolerance (discovered by the operator's first run — kept as a lesson):**
+> in the 1950s drivers **shared cars**, so points were split into halves, thirds, even *sevenths*
+> (the 1954 British GP fastest-lap point went to seven drivers, 1/7 ≈ 0.142857 each). Each mart
+> rounds its groups to 1dp before summing, so the totals are rounding-path-dependent: raw
+> **56,520.05** → driver path **56,519.8**, constructor path **56,520.0**. Exact float equality is
+> the wrong test; counts stay exact. *(Same era quirk, other direction: total wins 1,161 exceeds
+> raced races ~1,158 because a shared winning car = co-winners — informational, not asserted.)*
+> Also: summed race points can legitimately differ from the official `driver_standings`
+> (disqualifications, deductions) — that's why standings live as their own Silver table and Gold
+> aggregates *results*, the raw truth.
 
 ## 6. Acceptance criteria
 
@@ -140,3 +148,4 @@ results/races/pit_stops had **zero** quarantine — so these are exact predictio
 | Date | Change |
 |------|--------|
 | 2026-07-15 | Spec drafted — golden numbers pre-computed from source; implementation built same day |
+| 2026-07-15 | §5 amended after the operator's first run: points reconciliation now ±0.5 — exact float equality failed because 1950s shared-drive point splits (1/3, 1/7) make totals rounding-path-dependent; counts stay exact |

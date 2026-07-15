@@ -186,6 +186,13 @@ display(spark.table("f1.gold.circuit_stats").orderBy(F.desc("races_held")).limit
 # MAGIC Every total must tie back to Silver, and the two season marts must agree **with each other**
 # MAGIC (the triangle check: driver mart = constructor mart = silver). All against numbers computed
 # MAGIC from the source *before* this notebook existed.
+# MAGIC
+# MAGIC **Counts match exactly; points match within ±0.5.** Why the tolerance: in the 1950s drivers
+# MAGIC *shared cars*, so points were split — halves, thirds, even **sevenths** (the 1954 British GP
+# MAGIC fastest-lap point went to seven drivers, 1/7 ≈ 0.142857 each). Rounding each group to 1dp and
+# MAGIC then summing therefore gives a slightly different total per grouping path (raw 56,520.05 →
+# MAGIC driver path 56,519.8, constructor path 56,520.0). Exact float equality is the wrong test —
+# MAGIC a real engineering lesson caught by this very cell's first run.
 
 # COMMAND ----------
 
@@ -200,24 +207,26 @@ c = cs.agg(F.count("*"), F.sum("entries"), F.round(F.sum("points"), 1)).first()
 p = pe.agg(F.count("*"), F.sum("stops")).first()
 t = ct.agg(F.count("*"), F.sum("races_held")).first()
 
+# tolerance 0 = exact (counts can never drift); 0.5 = points (rounding-path-dependent, see above)
 checks = [
-    ("driver mart rows",              GOLDEN["driver_rows"],      d[0]),
-    ("Σ races_entered = silver.results", GOLDEN["entries"],       d[1]),
-    ("Σ points (driver mart)",        GOLDEN["points"],           d[2]),
-    ("Σ wins",                        GOLDEN["wins"],             d[3]),
-    ("Σ podiums",                     GOLDEN["podiums"],          d[4]),
-    ("Σ poles",                       GOLDEN["poles"],            d[5]),
-    ("Σ dnfs",                        GOLDEN["dnfs"],             d[6]),
-    ("constructor mart rows",         GOLDEN["constructor_rows"], c[0]),
-    ("Σ entries = silver.results",    GOLDEN["entries"],          c[1]),
-    ("Σ points (constructor = driver)", d[2],                     c[2]),
-    ("pit mart rows (1994–2026)",     GOLDEN["pit_rows"],         p[0]),
-    ("Σ stops = silver.pit_stops",    GOLDEN["stops"],            p[1]),
-    ("circuit mart rows",             GOLDEN["circuit_rows"],     t[0]),
-    ("Σ races_held = silver.races",   GOLDEN["races_held"],       t[1]),
+    ("driver mart rows",              GOLDEN["driver_rows"],      d[0], 0),
+    ("Σ races_entered = silver.results", GOLDEN["entries"],       d[1], 0),
+    ("Σ points (driver mart)",        GOLDEN["points"],           d[2], 0.5),
+    ("Σ wins",                        GOLDEN["wins"],             d[3], 0),
+    ("Σ podiums",                     GOLDEN["podiums"],          d[4], 0),
+    ("Σ poles",                       GOLDEN["poles"],            d[5], 0),
+    ("Σ dnfs",                        GOLDEN["dnfs"],             d[6], 0),
+    ("constructor mart rows",         GOLDEN["constructor_rows"], c[0], 0),
+    ("Σ entries = silver.results",    GOLDEN["entries"],          c[1], 0),
+    ("Σ points (constructor ≈ driver)", d[2],                     c[2], 0.5),
+    ("pit mart rows (1994–2026)",     GOLDEN["pit_rows"],         p[0], 0),
+    ("Σ stops = silver.pit_stops",    GOLDEN["stops"],            p[1], 0),
+    ("circuit mart rows",             GOLDEN["circuit_rows"],     t[0], 0),
+    ("Σ races_held = silver.races",   GOLDEN["races_held"],       t[1], 0),
 ]
-verdict = [(name, str(exp), str(act), "✅" if exp == act else "❌") for name, exp, act in checks]
-display(spark.createDataFrame(verdict, "check string, expected string, actual string, ok string"))
+verdict = [(name, str(exp), str(act), "exact" if tol == 0 else f"±{tol}",
+            "✅" if abs(exp - act) <= tol else "❌") for name, exp, act, tol in checks]
+display(spark.createDataFrame(verdict, "check string, expected string, actual string, tolerance string, ok string"))
 
 passed = sum(1 for *_, ok in verdict if ok == "✅")
 assert passed == len(checks), f"only {passed}/{len(checks)} reconciliation checks passed"
