@@ -110,7 +110,7 @@ Each milestone gets its own spec file in [`../specs/`](../specs/) and its own co
 | # | Milestone | Spec file | Status |
 |---|-----------|-----------|--------|
 | M0 | Planning & repo setup | *(this folder)* | ✅ Done |
-| M1 | Bronze — CSV upload + raw ingestion (14 tables) | `specs/01-bronze.spec.md` | 🔨 In progress |
+| M1 | Bronze — CSV upload + raw ingestion (14 tables) | `specs/01-bronze.spec.md` | ✅ Done |
 | M2 | Silver — type / clean / conform / dedupe | `specs/02-silver.spec.md` | ⬜ Not started |
 | M3 | Gold — aggregated business marts | `specs/03-gold.spec.md` | ⬜ Not started |
 | M4 | DLT pipeline + data-quality expectations | `specs/04-dlt-pipeline.spec.md` | ⬜ Not started |
