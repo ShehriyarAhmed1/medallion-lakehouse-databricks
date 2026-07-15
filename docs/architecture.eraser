@@ -1,0 +1,35 @@
+// F1 Medallion Lakehouse — main data flow
+// How to use: eraser.io → new file → Diagram as code → Flow chart → paste this in.
+// Same picture as docs/architecture.md §2 (Mermaid); this version is for slide-quality exports.
+
+title F1 Medallion Lakehouse — Data Flow
+
+Local Machine [icon: laptop] {
+  F1 CSVs [icon: file-text, label: "14 F1 CSVs — 1.0M rows (snapshot 2026-07-05)"]
+}
+
+Databricks Free Edition — catalog f1 [icon: cloud] {
+  Landing Volume [icon: folder, label: "/Volumes/f1/landing/ergast_csv"]
+
+  One Lakeflow DLT Pipeline + expectations (M4) [icon: settings] {
+    Bronze [icon: database, color: brown, label: "bronze — 14 raw Delta tables (as-is + ingest metadata)"]
+    Silver [icon: database, color: grey, label: "silver — typed, cleaned, deduped (source of truth)"]
+    Gold [icon: database, color: yellow, label: "gold — business marts (joined + aggregated)"]
+  }
+
+  Quarantine [icon: alert-triangle, color: orange, label: "quarantine — violating rows + reason (never dropped)"]
+  SQL Dashboard [icon: bar-chart, label: "Databricks SQL dashboard — 3+ business questions"]
+}
+
+F1 CSVs > Landing Volume: UI upload, one-time (M1)
+Landing Volume > Bronze: ingest as-is (M1)
+Bronze > Silver: cast, clean, conform, dedupe (M2)
+Silver > Gold: join, aggregate (M3)
+Silver > Quarantine: failed expectations (M2)
+Gold > SQL Dashboard: serve (M6)
+
+// Rules the arrows obey (constitution):
+// 1. Forward only — never backward, never skip a layer.
+// 2. Bronze is immutable; re-runs start from Bronze, never from re-upload.
+// 3. Row accounting closes: bronze = silver + quarantine, per table.
+// 4. The whole B->S->G flow is ONE declarative pipeline.

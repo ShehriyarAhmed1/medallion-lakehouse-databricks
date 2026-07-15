@@ -164,6 +164,7 @@ implement and verify it in the workspace.
 
 ## 8. Where to find the full detail
 
+- **Architecture & flow diagrams (north star):** [`docs/architecture.md`](docs/architecture.md)
 - **Planning:** [`planning/overview.md`](planning/overview.md) · [`planning/masterplan.md`](planning/masterplan.md) · [`planning/constitution.md`](planning/constitution.md)
 - **Specs (one per milestone):** [`specs/`](specs/)
 - **Implementation:** `src/` *(added from M1 onward)*

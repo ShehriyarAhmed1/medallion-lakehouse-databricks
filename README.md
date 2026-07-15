@@ -34,7 +34,7 @@ Databricks Free Edition · Delta Lake · Lakeflow Declarative Pipelines (DLT) ·
 | [`specs/`](specs/) | One spec per milestone (spec-first) |
 | `src/` | PySpark / DLT implementation (added per milestone) |
 | `sql/` | Databricks SQL dashboard queries |
-| `docs/` | Diagrams & screenshots (added per milestone) |
+| [`docs/architecture.md`](docs/architecture.md) | **The north-star flow diagram** + layer-by-layer walkthrough (read this first) |
 
 ## Milestones
 
