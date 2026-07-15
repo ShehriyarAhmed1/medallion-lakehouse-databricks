@@ -86,7 +86,7 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | # | Milestone | Status | Spec |
 |---|-----------|--------|------|
 | M0 | Planning & repo setup (F1 re-plan) | ✅ Done | [`planning/`](planning/) |
-| M1 | Bronze — CSV upload + raw ingestion (14 tables) | 📝 Spec drafted | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
+| M1 | Bronze — CSV upload + raw ingestion (14 tables) | 🔨 Notebook built — pending operator run | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
 | M2 | Silver — type / clean / conform / dedupe | ⬜ Planned | `specs/02-silver.spec.md` |
 | M3 | Gold — business marts | ⬜ Planned | `specs/03-gold.spec.md` |
 | M4 | DLT pipeline + expectations | ⬜ Planned | `specs/04-dlt-pipeline.spec.md` |
@@ -100,10 +100,13 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
   [`constitution v1.1.0`](planning/constitution.md) (data-source amendment; principles unchanged).
 - Namespace locked: catalog `f1`, schemas `landing / bronze / silver / gold / quarantine`.
 
-### ⬜ M1 — Bronze *(next)*
+### 🔨 M1 — Bronze *(in progress — the operator's first hands-on session)*
 Upload the 14 CSVs to `/Volumes/f1/landing/ergast_csv/`; ingest each as-is into `f1.bronze.<table>`
-with only `_source_file` + `_ingested_at` added. **Acceptance:** every Bronze table's row count equals
-its source CSV exactly; idempotent re-run.
+with only `_source_file` + `_ingested_at` added. **Built:** teaching notebook
+[`src/bronze/01_bronze_ingest.py`](src/bronze/01_bronze_ingest.py) (setup cells → upload check →
+`circuits` walkthrough → loop over 13 → 14/14 verdict table). **Pending:** the operator runs the
+spec's §7 runbook by hand. **Acceptance:** every Bronze table's row count equals its source CSV
+exactly; idempotent re-run.
 
 ### ⬜ M2 — Silver
 Typed casts (`\N` → NULL, dates, numerics), de-duplication on declared natural keys, referential and
@@ -156,10 +159,10 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-Implement **M1 Bronze**: build the `src/bronze/01_bronze_ingest` notebook against the drafted spec,
-then the operator runs the spec's §7 runbook by hand — catalog/schema/volume creation, CSV upload,
-cell-by-cell ingest, and the 14/14 ✅ verification verdict table — and records results in the spec's
-Completion section.
+**The operator's first hands-on workspace session** — run the M1 runbook
+([spec §7](specs/01-bronze.spec.md)): pull the repo into a Databricks Git folder, run the notebook's
+setup cells, upload the 14 CSVs, ingest cell by cell, and get the **14/14 ✅ verdict table**; run it
+a second time to prove idempotency, then record results in the spec's Completion section.
 
 ---
 

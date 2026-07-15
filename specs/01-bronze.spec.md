@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M01 |
-| **Status** | Draft ⬜ |
+| **Status** | In Progress 🔨 (notebook built — pending operator run) |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-15 |
 | **Completed** | — |
@@ -101,10 +101,10 @@ run it in one sitting, nothing left idling.
 
 | # | You do | You should see |
 |---|--------|----------------|
-| 1 | Workspace → **SQL Editor** → run `CREATE CATALOG IF NOT EXISTS f1;` then the five `CREATE SCHEMA IF NOT EXISTS f1.<landing/bronze/silver/gold/quarantine>;` statements, then `CREATE VOLUME IF NOT EXISTS f1.landing.ergast_csv;` (statements provided in the notebook's first markdown cell) | Each statement returns OK; **Catalog Explorer** shows `f1` with 5 schemas and an empty volume under `landing` |
+| 1 | Open `src/bronze/01_bronze_ingest` (via the Git folder) and run its two **setup cells** — `CREATE CATALOG/SCHEMA/VOLUME IF NOT EXISTS` (safe to re-run) | Each statement returns OK; **Catalog Explorer** shows `f1` with 5 schemas and an empty volume under `landing` |
 | 2 | **Catalog Explorer → f1 → landing → ergast_csv → Upload** — select all 14 CSVs from `~/Downloads/F1/` | 14 files listed in the volume with sizes (largest: `lap_times.csv` ≈ 25 MB) |
-| 3 | **Git folder**: clone the GitHub repo (if not already) and open `src/bronze/01_bronze_ingest` | Notebook opens with teaching cells explaining each step |
-| 4 | Attach serverless compute and **run the notebook cell by cell** (not Run-All) — read each markdown cell as you go | After each ingest step, a `display()` shows the table's first rows + its count |
+| 3 | Back in the notebook, run the **file-presence check** cell | A 14-row table, every file "✅ uploaded" |
+| 4 | **Run the rest cell by cell** (not Run-All) — first the `circuits` walkthrough (read → metadata → write, with a `display()` at each micro-step), then the loop over the other 13 | Schema + sample rows displayed at each step; per-table progress lines with counts during the loop |
 | 5 | Run the final **verification cell** | The M1 frontend: a 14-row verdict table — `table · expected · actual · ✅/❌` — showing **14/14 ✅** and the 1,002,649 total |
 | 6 | **Catalog Explorer → f1 → bronze → results** → *Sample Data* tab | Raw strings incl. literal `\N` values; `_source_file` and `_ingested_at` columns present |
 | 7 | **Run the notebook a second time**, then re-run the verification cell | Identical counts — idempotency confirmed with your own eyes |
@@ -138,3 +138,4 @@ run it in one sitting, nothing left idling.
 | Date | Change |
 |------|--------|
 | 2026-07-15 | Spec drafted |
+| 2026-07-15 | Implementation built (`src/bronze/01_bronze_ingest.py`); §7 steps 1/3/4 updated — setup SQL is runnable in-notebook instead of the SQL Editor |
