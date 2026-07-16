@@ -9,7 +9,7 @@
 
 | Metric | Value | Meaning |
 |--------|-------|---------|
-| Milestones complete | **5 / 8** (M0–M4 done) | All layers + the pipeline verified by the operator's own runs |
+| Milestones complete | **6 / 8** (M0–M5 done) | Layers, pipeline & governance all verified by the operator's own runs |
 | Dataset | **Formula 1 (Ergast schema)** | 14 relational CSVs, snapshot 2026-07-05, 1950 → 2026-in-progress |
 | Rows ingested → Bronze | **1,002,649 = source exactly** | 14/14 tables ✅ — no loss, no duplication |
 | Trusted rows → Silver | **1,000,396** | typed, snake_case, deduped, FK-verified |
@@ -96,8 +96,8 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | M2 | Silver — type / clean / conform / dedupe | ✅ Done | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
 | M3 | Gold — business marts | ✅ Done | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
 | M4 | DLT pipeline + expectations | ✅ Done | [`specs/04-dlt-pipeline.spec.md`](specs/04-dlt-pipeline.spec.md) |
-| M5 | Unity Catalog governance | 🔨 Built — pending operator run | [`specs/05-unity-catalog.spec.md`](specs/05-unity-catalog.spec.md) |
-| M6 | Databricks SQL dashboard | ⬜ Planned | — |
+| M5 | Unity Catalog governance | ✅ Done | [`specs/05-unity-catalog.spec.md`](specs/05-unity-catalog.spec.md) |
+| M6 | Databricks SQL dashboard | ⬜ Next | — |
 | M7 | Portfolio packaging | ⬜ Planned | — |
 
 ### ✅ M0 — Planning (re-done for F1)
@@ -145,9 +145,16 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
   sprint_results 568 = 566 + 2) · `audit_gold_reconciliation` **4/4 ok** ·
   **full refresh reproduced identical numbers — Constitution Rule V proven.**
 
-### ⬜ M5–M7 *(the home straight)*
-Governance comments/tags/grants (M5) → SQL dashboard answering ≥3 business questions (M6) →
-portfolio packaging with diagrams & screenshots (M7).
+### ✅ M5 — Unity Catalog governance
+- **What:** the lakehouse made self-describing — comments on catalog/volume/schemas/46 tables and
+  **every silver+gold column** (0 uncovered, asserted); `layer/path/milestone` tags; reviewer grants
+  (read on serving layers only). Via [`src/governance/05_governance.py`](src/governance/05_governance.py).
+- **Verified result (operator's own run, 2026-07-16):** verdict **6/6 ✅** against
+  `information_schema` — *"the catalog now documents itself."*
+
+### ⬜ M6–M7 *(the home straight)*
+SQL dashboard answering ≥3 business questions (M6) → portfolio packaging with diagrams &
+screenshots (M7).
 
 ---
 
@@ -187,10 +194,9 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-**Operator runs the M5 runbook** ([spec §5](specs/05-unity-catalog.spec.md)): run the governance
-notebook cell by cell (comments → tags → column docs → grants → verdict), then walk Catalog
-Explorer — the catalog should now read like documentation: every schema, all 46 prototype tables,
-and **every silver/gold column** described; reviewer grants visible on the Permissions tab.
+Draft **`specs/06-sql-dashboard.spec.md`** — the payoff: a Databricks SQL / AI-BI dashboard on the
+production Gold marts (`f1.medallion.gold_*`) answering ≥3 business questions (eras of dominance,
+constructor fortunes, pit-stop evolution, circuit history), with the queries versioned in `sql/`.
 
 ---
 

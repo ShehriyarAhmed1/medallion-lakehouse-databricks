@@ -3,10 +3,10 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M05 |
-| **Status** | In Progress 🔨 (notebook built — pending operator run) |
+| **Status** | ✅ Completed |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-16 |
-| **Completed** | — |
+| **Completed** | 2026-07-16 |
 | **Depends on** | M1–M4 (all objects exist) |
 
 ---
@@ -56,13 +56,13 @@ Grant statements are applied where the group exists (Free Edition) and shown via
 
 ## 4. Acceptance criteria
 
-- [ ] Catalog, volume, and 6/6 schemas carry comments; catalog + schemas tagged.
-- [ ] 46/46 prototype tables commented + tagged (`layer`, `path`, `milestone`).
-- [ ] **0 uncommented columns** in `f1.silver.*` and `f1.gold.*` (asserted in-notebook).
-- [ ] Grants applied per §3 and visible in `SHOW GRANTS`.
-- [ ] Verification verdict cell all-✅ (counts from `information_schema`).
-- [ ] **Catalog Explorer spot-check by the operator** — the milestone's visible surface.
-- [ ] Idempotent re-run; code committed; documented for a learner.
+- [x] Catalog, volume, and 6/6 schemas carry comments; catalog + schemas tagged.
+- [x] 46/46 prototype tables commented + tagged (`layer`, `path`, `milestone`).
+- [x] **0 uncommented columns** in `f1.silver.*` and `f1.gold.*` (asserted in-notebook).
+- [x] Grants applied per §3 and visible in `SHOW GRANTS`.
+- [x] Verification verdict cell all-✅ — operator's run reported **6/6**.
+- [x] **Catalog Explorer spot-check by the operator** — the milestone's visible surface.
+- [x] Idempotent re-run; code committed; documented for a learner.
 
 ## 5. Hands-on run & verification (operator runbook)
 
@@ -87,15 +87,24 @@ Grant statements are applied where the group exists (Free Edition) and shown via
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Coverage counts:** —
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion
+- **Completed on:** 2026-07-16 — operator's hands-on run (constitution v1.2.0), verdict **6/6 ✅**:
+  *"the catalog now documents itself."*
+- **What was built:** governance metadata via
+  [`src/governance/05_governance.py`](../src/governance/05_governance.py) — catalog + volume + 6
+  schema comments/tags, 46 prototype tables commented + tagged (138 tag rows), **every column of
+  `f1.silver.*` and `f1.gold.*` commented (0 uncovered, asserted)**, reviewer grants applied
+  (`account users` → read on gold + medallion only), best-effort `path=production` tags on the
+  pipeline datasets (counts reported in-notebook; their comments come from pipeline code — M4's
+  governance-as-code).
+- **Acceptance criteria:** all met per the in-notebook verdict (6/6 information_schema checks).
+- **Coverage counts:** 1 catalog · 1 volume · 6 schemas · 46 tables · 138 table-tag rows ·
+  silver+gold columns 100%.
+- **Deviations from spec & why:** none.
+- **Commit(s):** `e6a039b` spec · `1ce3011` implementation · this commit (completion).
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-16 | Spec drafted; implementation built same day |
+| 2026-07-16 | ✅ Completed — operator's run: 6/6 verdict, full column coverage |
