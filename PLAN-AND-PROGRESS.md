@@ -9,12 +9,13 @@
 
 | Metric | Value | Meaning |
 |--------|-------|---------|
-| Milestones complete | **4 / 8** (M0–M3 done) | Bronze, Silver & Gold all verified by the operator's own runs |
+| Milestones complete | **5 / 8** (M0–M4 done) | All layers + the pipeline verified by the operator's own runs |
 | Dataset | **Formula 1 (Ergast schema)** | 14 relational CSVs, snapshot 2026-07-05, 1950 → 2026-in-progress |
 | Rows ingested → Bronze | **1,002,649 = source exactly** | 14/14 tables ✅ — no loss, no duplication |
 | Trusted rows → Silver | **1,000,396** | typed, snake_case, deduped, FK-verified |
 | Rows quarantined | **2,253** | each with a written reason — **never silently dropped** |
 | Gold business marts | **4** | all reconcile to Silver (14-check verdict, golden numbers) |
+| One pipeline (Rule V) | **61-node DLT graph** | full refresh reproduces identical numbers — **proven, not promised** |
 
 **Row accounting always closes:** `1,000,396 silver + 2,253 quarantine = 1,002,649 bronze` — and the
 quarantine counts matched the source-scan **predictions** exactly (1988/89 Brazilian GP duplicate laps
@@ -94,8 +95,8 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | M1 | Bronze — CSV upload + raw ingestion (14 tables) | ✅ Done | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
 | M2 | Silver — type / clean / conform / dedupe | ✅ Done | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
 | M3 | Gold — business marts | ✅ Done | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
-| M4 | DLT pipeline + expectations | 🔨 Built — pending operator run | [`specs/04-dlt-pipeline.spec.md`](specs/04-dlt-pipeline.spec.md) |
-| M5 | Unity Catalog governance | ⬜ Planned | — |
+| M4 | DLT pipeline + expectations | ✅ Done | [`specs/04-dlt-pipeline.spec.md`](specs/04-dlt-pipeline.spec.md) |
+| M5 | Unity Catalog governance | ⬜ Next | — |
 | M6 | Databricks SQL dashboard | ⬜ Planned | — |
 | M7 | Portfolio packaging | ⬜ Planned | — |
 
@@ -134,16 +135,17 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
   Hamilton 106 · Schumacher 91 · Verstappen 71 wins; pit stops tell the refuelling-ban story
   (~30s medians → ~23s after 2010).
 
-### 🔨 M4 — DLT pipeline *(built — pending the operator's run)*
-The whole verified flow as **one Lakeflow Declarative Pipeline**
-([`src/pipelines/f1_medallion_pipeline.py`](src/pipelines/f1_medallion_pipeline.py)): 14 bronze + 14
-silver (each behind a native `quality_gate` expectation) + 14 quarantine + 4 gold marts + **two
-in-pipeline audit datasets** that assert the run reproduced the verified numbers. Targets a fresh
-`f1.medallion` schema (prefixed names) — the notebook-built tables stay untouched as the M1–M3
-prototypes. Predicted expectation metrics: `silver_lap_times` ≈ 99.74% (2,251 dropped),
-`silver_sprint_results` 2 dropped, rest 100%.
+### ✅ M4 — DLT pipeline + expectations
+- **What:** the whole verified flow as **one Lakeflow Declarative Pipeline**
+  ([`src/pipelines/f1_medallion_pipeline.py`](src/pipelines/f1_medallion_pipeline.py)) — 61-node
+  graph into `f1.medallion`: 14 bronze + 14 gated silver + 14 quarantine + 4 gold + 2 audits;
+  the M2 rules run as native `quality_gate` expectations.
+- **Verified result (operator's own run + full refresh, 2026-07-16):**
+  `audit_row_accounting` **14/14** closes & as-predicted (lap_times 876,204 = 873,953 + 2,251;
+  sprint_results 568 = 566 + 2) · `audit_gold_reconciliation` **4/4 ok** ·
+  **full refresh reproduced identical numbers — Constitution Rule V proven.**
 
-### ⬜ M5–M7
+### ⬜ M5–M7 *(the home straight)*
 Governance comments/tags/grants (M5) → SQL dashboard answering ≥3 business questions (M6) →
 portfolio packaging with diagrams & screenshots (M7).
 
@@ -185,10 +187,9 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-**Operator runs the M4 runbook** ([spec §7](specs/04-dlt-pipeline.spec.md)): create the
-`f1-medallion-pipeline` (serverless, source = the pipeline file, target `f1.medallion`), press
-Start, watch the graph build the whole lakehouse, check the expectation pass-rates and the two
-audit tables, then run a **full refresh** to prove reproducibility (Constitution V).
+Draft **`specs/05-unity-catalog.spec.md`** — governance: comments on every catalog/schema/table/key
+column (so Catalog Explorer reads like documentation), tags (layer, domain, source), and the
+documented access grants a reviewer would need.
 
 ---
 

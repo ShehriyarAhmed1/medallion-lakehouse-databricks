@@ -3,10 +3,10 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M04 |
-| **Status** | In Progress 🔨 (pipeline built — pending operator run) |
+| **Status** | ✅ Completed |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-16 |
-| **Completed** | — |
+| **Completed** | 2026-07-16 |
 | **Depends on** | M1–M3 (verified layer logic + numbers) |
 
 ---
@@ -75,13 +75,14 @@ production path**.
 
 ## 6. Acceptance criteria
 
-- [ ] Pipeline runs **green end-to-end on serverless** (the one allowed pipeline — Free Edition).
-- [ ] Expectation metrics in the UI match §5 (lap_times ≈ 99.74%, sprint_results 2 dropped, rest 100%).
-- [ ] `audit_row_accounting`: 14/14 `closes` & `as_predicted` true.
-- [ ] `audit_gold_reconciliation`: 4/4 `ok` true.
-- [ ] **Full refresh reproduces identical numbers** (Constitution V's literal test).
-- [ ] Operator personally created, ran, and inspected the pipeline (constitution v1.2.0).
-- [ ] Code committed; documented for a learner.
+- [x] Pipeline runs **green end-to-end on serverless** (the one allowed pipeline — Free Edition).
+- [x] Expectation gate results match §5 — verified via `audit_row_accounting` + quarantine complement
+      (2,251 dropped on lap_times, 2 on sprint_results, 0 elsewhere); see Completion for the UI-tab note.
+- [x] `audit_row_accounting`: 14/14 `closes` & `as_predicted` true (operator-pasted output on record).
+- [x] `audit_gold_reconciliation`: 4/4 `ok` true (operator-pasted output on record).
+- [x] **Full refresh reproduces identical numbers** (Constitution V's literal test — operator-confirmed).
+- [x] Operator personally created, ran, and inspected the pipeline (constitution v1.2.0).
+- [x] Code committed; documented for a learner.
 
 ## 7. Hands-on run & verification (operator runbook)
 
@@ -116,16 +117,31 @@ file (classic `dlt` names), and the deviation gets recorded here.
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Actual output schema / row counts:** —
-- **Quarantine / DQ results:** —
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion
+- **Completed on:** 2026-07-16 — operator created and ran the pipeline hands-on (constitution v1.2.0).
+- **What was built:** `f1-medallion-pipeline` (serverless), source =
+  [`src/pipelines/f1_medallion_pipeline.py`](../src/pipelines/f1_medallion_pipeline.py) attached from
+  the Git folder; 61-node graph: 14 bronze + 14 staged views + 14 gated silver + 14 quarantine +
+  4 gold marts + 2 audits, all in `f1.medallion`.
+- **Acceptance criteria:** all met. `audit_row_accounting` **14/14** `closes` + `as_predicted`
+  (lap_times 876,204 = 873,953 + 2,251 · sprint_results 568 = 566 + 2 · rest N + 0);
+  `audit_gold_reconciliation` **4/4 ok** (3,254 / 1,132 / 33 / 78 rows; key sums 27,436 · 27,436 ·
+  22,475 · 1,171). **Full refresh reproduced identical numbers — Rule V proven.**
+- **Actual output schema / row counts:** identical to the verified M1–M3 contracts (+ the documented
+  `_reasons` gate column on silver datasets).
+- **Quarantine / DQ results:** the `quality_gate` expectations dropped exactly the verified counts;
+  quarantine datasets hold the complement with reasons.
+- **Deviations from spec & why:** two, both recorded honestly. (1) The workspace opened the **new
+  Lakeflow Pipelines Editor**, so runbook steps 3–4 differed: catalog/schema set via the top-bar
+  `f1.medallion` chip, source attached via **⋮ → "Add existing source code"** (Git-folder file),
+  scaffold `my_transformation.py` deleted; serverless is implicit on Free Edition (no selector).
+  (2) The per-node **Data quality tab** metric wasn't visually located in the new UI; the gate's
+  numbers were verified through the audit table + quarantine counts instead — an equivalent
+  (arguably stronger) check.
+- **Commit(s):** `a873c12` spec · `a6a4a12` implementation · this commit (completion).
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-16 | Spec drafted (single-schema `f1.medallion` design, gate-pattern expectations, in-pipeline audit); implementation built same day |
+| 2026-07-16 | ✅ Completed — operator's run + full refresh: both audits all-true, identical numbers twice |
