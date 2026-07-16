@@ -21,7 +21,7 @@ _TEMPLATE.spec.md           the template every spec copies
 | M3 | Gold — aggregated marts | `03-gold.spec.md` | ✅ Completed |
 | M4 | DLT pipeline + expectations | `04-dlt-pipeline.spec.md` | ✅ Completed |
 | M5 | Unity Catalog governance | `05-unity-catalog.spec.md` | ✅ Completed |
-| M6 | Databricks SQL dashboard | `06-sql-dashboard.spec.md` | ⬜ Not started |
+| M6 | Databricks SQL dashboard | `06-sql-dashboard.spec.md` | 🔨 In progress |
 | M7 | Portfolio packaging | `07-packaging.spec.md` | ⬜ Not started |
 
 ## Spec lifecycle

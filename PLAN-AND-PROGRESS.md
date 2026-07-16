@@ -97,7 +97,7 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | M3 | Gold — business marts | ✅ Done | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
 | M4 | DLT pipeline + expectations | ✅ Done | [`specs/04-dlt-pipeline.spec.md`](specs/04-dlt-pipeline.spec.md) |
 | M5 | Unity Catalog governance | ✅ Done | [`specs/05-unity-catalog.spec.md`](specs/05-unity-catalog.spec.md) |
-| M6 | Databricks SQL dashboard | ⬜ Next | — |
+| M6 | Databricks SQL dashboard | 🔨 Queries built — dashboard pending operator build | [`specs/06-sql-dashboard.spec.md`](specs/06-sql-dashboard.spec.md) |
 | M7 | Portfolio packaging | ⬜ Planned | — |
 
 ### ✅ M0 — Planning (re-done for F1)
@@ -194,9 +194,10 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-Draft **`specs/06-sql-dashboard.spec.md`** — the payoff: a Databricks SQL / AI-BI dashboard on the
-production Gold marts (`f1.medallion.gold_*`) answering ≥3 business questions (eras of dominance,
-constructor fortunes, pit-stop evolution, circuit history), with the queries versioned in `sql/`.
+**Operator builds the dashboard** ([spec §5](specs/06-sql-dashboard.spec.md)): create an AI/BI
+dashboard, add the 6 versioned datasets from [`sql/`](sql/), lay out the widgets (KPI strip, three
+era lines, wins bar, circuit table), verify every widget against the pre-computed anchors
+(Hamilton 106 wins · Ferrari 11,669.3 points · pit median ≈22.3s in 2012), publish, screenshot.
 
 ---
 
