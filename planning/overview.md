@@ -113,7 +113,7 @@ Each milestone gets its own spec file in [`../specs/`](../specs/) and its own co
 | M1 | Bronze — CSV upload + raw ingestion (14 tables) | `specs/01-bronze.spec.md` | ✅ Done |
 | M2 | Silver — type / clean / conform / dedupe | `specs/02-silver.spec.md` | ✅ Done |
 | M3 | Gold — aggregated business marts | `specs/03-gold.spec.md` | ✅ Done |
-| M4 | DLT pipeline + data-quality expectations | `specs/04-dlt-pipeline.spec.md` | ⬜ Not started |
+| M4 | DLT pipeline + data-quality expectations | `specs/04-dlt-pipeline.spec.md` | 🔨 In progress |
 | M5 | Unity Catalog governance | `specs/05-unity-catalog.spec.md` | ⬜ Not started |
 | M6 | Databricks SQL dashboard | `specs/06-sql-dashboard.spec.md` | ⬜ Not started |
 | M7 | Portfolio packaging | `specs/07-packaging.spec.md` | ⬜ Not started |

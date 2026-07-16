@@ -94,7 +94,7 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | M1 | Bronze — CSV upload + raw ingestion (14 tables) | ✅ Done | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
 | M2 | Silver — type / clean / conform / dedupe | ✅ Done | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
 | M3 | Gold — business marts | ✅ Done | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
-| M4 | DLT pipeline + expectations | ⬜ Next | `specs/04-dlt-pipeline.spec.md` |
+| M4 | DLT pipeline + expectations | 🔨 Built — pending operator run | [`specs/04-dlt-pipeline.spec.md`](specs/04-dlt-pipeline.spec.md) |
 | M5 | Unity Catalog governance | ⬜ Planned | — |
 | M6 | Databricks SQL dashboard | ⬜ Planned | — |
 | M7 | Portfolio packaging | ⬜ Planned | — |
@@ -134,9 +134,18 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
   Hamilton 106 · Schumacher 91 · Verstappen 71 wins; pit stops tell the refuelling-ban story
   (~30s medians → ~23s after 2010).
 
-### ⬜ M4–M7
-One DLT pipeline with native expectations (M4) → governance comments/tags/grants (M5) → SQL dashboard
-answering ≥3 business questions (M6) → portfolio packaging with diagrams & screenshots (M7).
+### 🔨 M4 — DLT pipeline *(built — pending the operator's run)*
+The whole verified flow as **one Lakeflow Declarative Pipeline**
+([`src/pipelines/f1_medallion_pipeline.py`](src/pipelines/f1_medallion_pipeline.py)): 14 bronze + 14
+silver (each behind a native `quality_gate` expectation) + 14 quarantine + 4 gold marts + **two
+in-pipeline audit datasets** that assert the run reproduced the verified numbers. Targets a fresh
+`f1.medallion` schema (prefixed names) — the notebook-built tables stay untouched as the M1–M3
+prototypes. Predicted expectation metrics: `silver_lap_times` ≈ 99.74% (2,251 dropped),
+`silver_sprint_results` 2 dropped, rest 100%.
+
+### ⬜ M5–M7
+Governance comments/tags/grants (M5) → SQL dashboard answering ≥3 business questions (M6) →
+portfolio packaging with diagrams & screenshots (M7).
 
 ---
 
@@ -176,10 +185,10 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-Draft **`specs/04-dlt-pipeline.spec.md`** — re-express the verified Bronze → Silver → Gold flow as
-**one Lakeflow Declarative Pipeline**, with the M2 quality rules as native expectations and the
-pipeline-graph UI as the milestone's visible surface; acceptance = a full refresh reproduces the
-already-verified counts (1,002,649 / 1,000,396 + 2,253 / four reconciled marts).
+**Operator runs the M4 runbook** ([spec §7](specs/04-dlt-pipeline.spec.md)): create the
+`f1-medallion-pipeline` (serverless, source = the pipeline file, target `f1.medallion`), press
+Start, watch the graph build the whole lakehouse, check the expectation pass-rates and the two
+audit tables, then run a **full refresh** to prove reproducibility (Constitution V).
 
 ---
 
