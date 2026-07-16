@@ -20,7 +20,7 @@ _TEMPLATE.spec.md           the template every spec copies
 | M2 | Silver — type / clean / conform / dedupe | `02-silver.spec.md` | ✅ Completed |
 | M3 | Gold — aggregated marts | `03-gold.spec.md` | ✅ Completed |
 | M4 | DLT pipeline + expectations | `04-dlt-pipeline.spec.md` | ✅ Completed |
-| M5 | Unity Catalog governance | `05-unity-catalog.spec.md` | ⬜ Not started |
+| M5 | Unity Catalog governance | `05-unity-catalog.spec.md` | 🔨 In progress |
 | M6 | Databricks SQL dashboard | `06-sql-dashboard.spec.md` | ⬜ Not started |
 | M7 | Portfolio packaging | `07-packaging.spec.md` | ⬜ Not started |
 

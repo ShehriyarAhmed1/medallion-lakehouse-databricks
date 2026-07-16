@@ -96,7 +96,7 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | M2 | Silver — type / clean / conform / dedupe | ✅ Done | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
 | M3 | Gold — business marts | ✅ Done | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
 | M4 | DLT pipeline + expectations | ✅ Done | [`specs/04-dlt-pipeline.spec.md`](specs/04-dlt-pipeline.spec.md) |
-| M5 | Unity Catalog governance | ⬜ Next | — |
+| M5 | Unity Catalog governance | 🔨 Built — pending operator run | [`specs/05-unity-catalog.spec.md`](specs/05-unity-catalog.spec.md) |
 | M6 | Databricks SQL dashboard | ⬜ Planned | — |
 | M7 | Portfolio packaging | ⬜ Planned | — |
 
@@ -187,9 +187,10 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-Draft **`specs/05-unity-catalog.spec.md`** — governance: comments on every catalog/schema/table/key
-column (so Catalog Explorer reads like documentation), tags (layer, domain, source), and the
-documented access grants a reviewer would need.
+**Operator runs the M5 runbook** ([spec §5](specs/05-unity-catalog.spec.md)): run the governance
+notebook cell by cell (comments → tags → column docs → grants → verdict), then walk Catalog
+Explorer — the catalog should now read like documentation: every schema, all 46 prototype tables,
+and **every silver/gold column** described; reviewer grants visible on the Permissions tab.
 
 ---
 
