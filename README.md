@@ -41,7 +41,7 @@ Databricks Free Edition · Delta Lake · Lakeflow Declarative Pipelines (DLT) ·
 - [x] **M0** — Planning & repo setup
 - [x] **M1** — Bronze (CSV upload + raw ingestion, 14 tables — 14/14 verified, 1,002,649 rows)
 - [x] **M2** — Silver (typed & deduped: 1,000,396 trusted + 2,253 quarantined with reasons — accounting closes)
-- [ ] **M3** — Gold (aggregated business marts)
+- [x] **M3** — Gold (4 marts, 14-check reconciliation to Silver, first charts — Hamilton 106 · Schumacher 91 · Verstappen 71)
 - [ ] **M4** — DLT pipeline + data-quality expectations
 - [ ] **M5** — Unity Catalog governance
 - [ ] **M6** — Databricks SQL dashboard

@@ -9,11 +9,12 @@
 
 | Metric | Value | Meaning |
 |--------|-------|---------|
-| Milestones complete | **3 / 8** (M0–M2 done) | Bronze & Silver both verified by the operator's own runs |
+| Milestones complete | **4 / 8** (M0–M3 done) | Bronze, Silver & Gold all verified by the operator's own runs |
 | Dataset | **Formula 1 (Ergast schema)** | 14 relational CSVs, snapshot 2026-07-05, 1950 → 2026-in-progress |
 | Rows ingested → Bronze | **1,002,649 = source exactly** | 14/14 tables ✅ — no loss, no duplication |
 | Trusted rows → Silver | **1,000,396** | typed, snake_case, deduped, FK-verified |
 | Rows quarantined | **2,253** | each with a written reason — **never silently dropped** |
+| Gold business marts | **4** | all reconcile to Silver (14-check verdict, golden numbers) |
 
 **Row accounting always closes:** `1,000,396 silver + 2,253 quarantine = 1,002,649 bronze` — and the
 quarantine counts matched the source-scan **predictions** exactly (1988/89 Brazilian GP duplicate laps
@@ -92,8 +93,8 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
 | M0 | Planning & repo setup (F1 re-plan) | ✅ Done | [`planning/`](planning/) |
 | M1 | Bronze — CSV upload + raw ingestion (14 tables) | ✅ Done | [`specs/01-bronze.spec.md`](specs/01-bronze.spec.md) |
 | M2 | Silver — type / clean / conform / dedupe | ✅ Done | [`specs/02-silver.spec.md`](specs/02-silver.spec.md) |
-| M3 | Gold — business marts | 🔨 Built — pending operator run | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
-| M4 | DLT pipeline + expectations | ⬜ Planned | `specs/04-dlt-pipeline.spec.md` |
+| M3 | Gold — business marts | ✅ Done | [`specs/03-gold.spec.md`](specs/03-gold.spec.md) |
+| M4 | DLT pipeline + expectations | ⬜ Next | `specs/04-dlt-pipeline.spec.md` |
 | M5 | Unity Catalog governance | ⬜ Planned | — |
 | M6 | Databricks SQL dashboard | ⬜ Planned | — |
 | M7 | Portfolio packaging | ⬜ Planned | — |
@@ -123,13 +124,15 @@ acceptance criteria before it's marked done — the same *verify-then-mark-done*
   `sprint_results` 2 (2026 Miami sprint, missing status). DNFs kept as real NULLs; all 13 scheduled
   2026 races preserved; `lap_times` key verified unique.
 
-### 🔨 M3 — Gold *(built — pending the operator's run)*
-Four marts locked in the spec: `driver_season_summary` (3,254 rows predicted), `constructor_season_summary`
-(1,132), `pit_stop_evolution` (33 seasons, 1994–2026), `circuit_stats` (78). Built:
-[`src/gold/03_gold_marts.py`](src/gold/03_gold_marts.py) — the project's first joins, 14 reconciliation
-checks against **golden numbers pre-computed from source** (Σpoints 56,520.1 · Σwins 1,161 — the two
-season marts must also agree with each other), plus the first charts (Hamilton 106 · Schumacher 91 ·
-Verstappen 71 wins as the sanity anchor).
+### ✅ M3 — Gold (business marts)
+- **What:** four dashboard-ready marts — `driver_season_summary` (3,254 rows), `constructor_season_summary`
+  (1,132), `pit_stop_evolution` (33 seasons, 1994–2026), `circuit_stats` (78) — via the project's
+  first joins ([`src/gold/03_gold_marts.py`](src/gold/03_gold_marts.py)).
+- **Verified result (operator's own run, 2026-07-15):** reconciliation **14/14 ✅** against golden
+  numbers pre-computed from source (12 exact; points within ±0.5 — 1950s shared-drive splits make
+  totals rounding-path-dependent, a lesson the operator's first run caught). Charts confirm history:
+  Hamilton 106 · Schumacher 91 · Verstappen 71 wins; pit stops tell the refuelling-ban story
+  (~30s medians → ~23s after 2010).
 
 ### ⬜ M4–M7
 One DLT pipeline with native expectations (M4) → governance comments/tags/grants (M5) → SQL dashboard
@@ -173,9 +176,10 @@ Delta time-travel rollback.
 
 ## 7. Immediate next step
 
-**Operator runs the M3 runbook** ([spec §7](specs/03-gold.spec.md)): pull `main`, run
-`src/gold/03_gold_marts` cell by cell — the first joins, four marts, the 14-check reconciliation
-verdict, and three charts — then report the numbers for the Completion section.
+Draft **`specs/04-dlt-pipeline.spec.md`** — re-express the verified Bronze → Silver → Gold flow as
+**one Lakeflow Declarative Pipeline**, with the M2 quality rules as native expectations and the
+pipeline-graph UI as the milestone's visible surface; acceptance = a full refresh reproduces the
+already-verified counts (1,002,649 / 1,000,396 + 2,253 / four reconciled marts).
 
 ---
 

@@ -3,10 +3,10 @@
 | Field | Value |
 |-------|-------|
 | **Milestone** | M03 |
-| **Status** | In Progress 🔨 (notebook built — pending operator run) |
+| **Status** | ✅ Completed |
 | **Owner** | Shehriyar Ahmed |
 | **Created** | 2026-07-15 |
-| **Completed** | — |
+| **Completed** | 2026-07-15 |
 | **Depends on** | M2 (Silver) |
 
 ---
@@ -102,13 +102,13 @@ results/races/pit_stops had **zero** quarantine — so these are exact predictio
 
 ## 6. Acceptance criteria
 
-- [ ] Four marts exist at `f1.gold.*` with the contracted schemas.
-- [ ] Reconciliation verdict all-✅ against the §5 golden numbers (asserted in-notebook).
-- [ ] Charts render in-notebook: all-time wins top-10, points-by-season (Hamilton/Schumacher/
+- [x] Four marts exist at `f1.gold.*` with the contracted schemas.
+- [x] Reconciliation verdict all-✅ against the §5 golden numbers (asserted in-notebook).
+- [x] Charts render in-notebook: all-time wins top-10, points-by-season (Hamilton/Schumacher/
       Verstappen), pit-stop evolution — sanity: Hamilton 106 · Schumacher 91 · Verstappen 71 wins.
-- [ ] Idempotent re-run (identical numbers).
-- [ ] Operator personally executed every step and saw each result (constitution v1.2.0).
-- [ ] Code committed; documented for a learner.
+- [x] Idempotent re-run (identical numbers — the full notebook was re-run after the §5 amendment).
+- [x] Operator personally executed every step and saw each result (constitution v1.2.0).
+- [x] Code committed; documented for a learner.
 
 ## 7. Hands-on run & verification (operator runbook)
 
@@ -135,17 +135,26 @@ results/races/pit_stops had **zero** quarantine — so these are exact predictio
 
 ---
 
-## ✅ Completion  *(fill in when done)*
-- **Completed on:** —
-- **What was built:** —
-- **Acceptance criteria:** —
-- **Actual output schema / row counts:** —
-- **Quarantine / DQ results:** — *(n/a — reconciliation verdict instead)*
-- **Deviations from spec & why:** —
-- **Commit(s):** —
+## ✅ Completion
+- **Completed on:** 2026-07-15 — operator's hands-on run (constitution v1.2.0).
+- **What was built:** four marts via [`src/gold/03_gold_marts.py`](../src/gold/03_gold_marts.py):
+  `driver_season_summary` (3,254 rows) · `constructor_season_summary` (1,132) ·
+  `pit_stop_evolution` (33 seasons, 1994–2026) · `circuit_stats` (78) — plus the project's first
+  joins (assert-verified lossless) and first charts.
+- **Acceptance criteria:** all met — reconciliation verdict **14/14 ✅** (12 exact; the 2 points
+  totals within ±0.5: driver path 56,519.8 / constructor path 56,520.0 vs raw 56,520.05).
+- **Actual output schema / row counts:** per contract; totals tie to Silver (Σentries 27,436 ·
+  Σwins 1,161 · Σpodiums 3,495 · Σpoles 1,168 · Σdnfs 10,953 · Σstops 22,475 · Σraces_held 1,171).
+- **Quarantine / DQ results:** n/a — reconciliation verdict instead (above).
+- **Deviations from spec & why:** one, kept as a lesson — the operator's first run failed the two
+  points checks under exact float equality; §5 was amended to ±0.5 (1950s shared-drive point splits
+  make totals rounding-path-dependent). Also one ops note: a chart cell hung on a stale serverless
+  session (~12 min); resolved by interrupt + reattach — no data impact (read-only cell).
+- **Commit(s):** `bfdec43` spec · `894eace` implementation · `883b239` tolerance fix · this commit.
 
 ## Changelog
 | Date | Change |
 |------|--------|
 | 2026-07-15 | Spec drafted — golden numbers pre-computed from source; implementation built same day |
 | 2026-07-15 | §5 amended after the operator's first run: points reconciliation now ±0.5 — exact float equality failed because 1950s shared-drive point splits (1/3, 1/7) make totals rounding-path-dependent; counts stay exact |
+| 2026-07-15 | ✅ Completed — operator's re-run: verdict 14/14, all three charts rendered |

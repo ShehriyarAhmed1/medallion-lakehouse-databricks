@@ -303,7 +303,7 @@ ax.plot(pe_pd["season"], pe_pd["median_stop_s"], color=BLUE, linewidth=2)
 best = pe_pd.loc[pe_pd["median_stop_s"].idxmin()]
 ax.annotate(f"median {best['median_stop_s']:.1f}s ({int(best['season'])})",
             (best["season"], best["median_stop_s"]),
-            xytext=(0, -16), textcoords="offset points", fontsize=9, color=INK, ha="center")
+            xytext=(8, 10), textcoords="offset points", fontsize=9, color=INK, ha="left")
 ax.set_title("Median pit-stop duration by season (seconds, 1994–2026)", loc="left",
              fontsize=12, color=INK, pad=12)
 ax.yaxis.grid(True, color=GRID, linewidth=0.8)
